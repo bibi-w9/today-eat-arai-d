@@ -1,6 +1,7 @@
 [
   {
     "name": "ข้าวผัดไข่",
+    "image": "/images/ข้าวผัดไข่.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "high_protein"],
     "ingredients": [
@@ -20,6 +21,7 @@
   },
   {
     "name": "ผัดกะเพราหมู",
+    "image": "/images/ผัดกะเพราหมู.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal"],
     "ingredients": [
