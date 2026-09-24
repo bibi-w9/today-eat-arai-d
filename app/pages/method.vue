@@ -20,10 +20,10 @@
         <p class="text-gray-500 mt-2 font-medium text-sm bg-pink-100 inline-block px-4 py-1 rounded-full text-pink-600">สเต็ป 2 / 3</p>
       </div>
 
-      <!-- วิธีการทำอาหาร (Grid แบบ 2 คอลัมน์ 3 แถว) -->
+      <!-- วิธีการทำอาหาร (วนลูปจาก filteredMethods แทน methods เดิม) -->
       <div class="grid grid-cols-2 gap-4 mb-8">
         <button 
-          v-for="method in methods" :key="method.id"
+          v-for="method in filteredMethods" :key="method.id"
           @click="selectedMethod = method.id"
           class="flex flex-col items-center justify-center p-5 rounded-3xl border-4 transition-all duration-300 group"
           :class="selectedMethod === method.id ? 'bg-pink-50 border-pink-400 text-pink-600 shadow-md scale-105' : 'bg-white border-pink-100 text-gray-400 hover:bg-pink-50 hover:border-pink-200 hover:-translate-y-1'"
@@ -33,7 +33,7 @@
         </button>
       </div>
 
-      <!-- ปุ่มถัดไป (จะส่งทั้งข้อมูล category จากหน้าแรก และ method จากหน้านี้ไปหน้าอัปโหลด) -->
+      <!-- ปุ่มถัดไป -->
       <button 
         @click="goToNextStep"
         :disabled="!selectedMethod"
@@ -49,35 +49,45 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue' // ดึง computed เข้ามาใช้งาน
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
-const route = useRoute() // ดึงเพื่อรับค่า category ที่ส่งมาจากหน้าก่อน
+const route = useRoute() 
 
-// State เก็บค่าที่ผู้ใช้เลือก
 const selectedMethod = ref('')
 
-// ข้อมูลวิธีการทำอาหาร
-const methods = [
+// ข้อมูลวิธีการทำอาหารทั้งหมด (เก็บไว้เป็นฐานข้อมูลหลัก)
+const allMethods = [
   { id: 'fry', label: 'ทอด', icon: '🍳' },
   { id: 'stir-fry', label: 'ผัด', icon: '🥘' },
   { id: 'boil', label: 'ต้ม / แกง', icon: '🍲' },
   { id: 'bake', label: 'ย่าง / อบ', icon: '🔥' },
   { id: 'steam', label: 'นึ่ง', icon: '🥟' },
-  { id: 'salad', label: 'ยำ / ทานสด', icon: '🥗' }
 ]
 
-// ฟังก์ชันสำหรับไปหน้าถัดไป (หน้าอัปโหลดรูป)
+// สร้าง Computed คัดกรองวิธีการทำอาหารแบบเรียลไทม์
+const filteredMethods = computed(() => {
+  // ดึงค่าหมวดหมู่ที่ส่งมาจากหน้าแรก
+  const category = route.query.category 
+
+  // ถ้าหมวดหมู่คือ 'healthy' ให้ตัด 'fry' (ทอด) และ 'salad' (ยำ) ทิ้งไป
+  if (category === 'healthy') {
+    return allMethods.filter(method => method.id !== 'fry' && method.id !== 'salad')
+  }
+  
+  // ถ้าเป็นหมวดหมู่อื่น ให้แสดงวิธีทำอาหารทั้งหมดตามปกติ
+  return allMethods
+})
+
 const goToNextStep = () => {
   if (!selectedMethod.value) return
   
-  // นำทางไปหน้า /upload พร้อมแนบค่า category และ method ไปที่ URL
   router.push({ 
     path: '/upload', 
     query: { 
-      category: route.query.category, // ดึงค่าเดิมมาจาก URL หน้าแรก
-      method: selectedMethod.value    // ส่งค่าใหม่ที่เพิ่งเลือกไปด้วย
+      category: route.query.category, 
+      method: selectedMethod.value    
     } 
   })
 }

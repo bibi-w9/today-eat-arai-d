@@ -61,10 +61,10 @@ const selectedCategory = ref('')
 
 // ข้อมูลหมวดหมู่อาหาร (เพิ่มคำบรรยายสั้นๆ ให้น่าอ่าน)
 const categories = [
-  { id: 'clean', label: 'อาหารคลีน', icon: '🥗', desc: 'ผักแน่น โปรตีนสูง' },
+  { id: 'healthy', label: 'อาหารคลีน', icon: '🥗', desc: 'ผักแน่น โปรตีนสูง' },
   { id: 'normal', label: 'ทั่วไป', icon: '🍱', desc: 'เมนูตามสั่งยอดฮิต' },
-  { id: 'spicy', label: 'รสจัดจ้าน', icon: '🌶️', desc: 'เผ็ดเปรี้ยว แซ่บถึงใจ' },
-  { id: 'dessert', label: 'ของหวาน', icon: '🍰', desc: 'เติมน้ำตาลหน่อย' }
+  { id: 'high protein', label: 'โปรตีนสูง', icon: '🥩', desc: 'เน้นเนื้อสัตว์ สร้างกล้ามเนื้อ' },
+  { id: 'vegan', label: 'มังสวิรัติ', icon: '🥦', desc: 'ไร้เนื้อสัตว์ ดีต่อสุขภาพ' }
 ]
 
 // ฟังก์ชันสำหรับไปหน้าถัดไป

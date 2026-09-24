@@ -10,6 +10,14 @@
     <!-- กล่องเนื้อหาหลัก (ขยายกว้างรองรับ 2 คอลัมน์) -->
     <div class="relative z-10 w-full max-w-xl lg:max-w-5xl bg-white/90 backdrop-blur-xl rounded-[3rem] p-6 md:p-10 lg:p-12 shadow-sm border-2 border-white my-auto">
       
+      <!-- 🟢 เพิ่มปุ่ม "ดูเมนูที่บันทึกไว้" ตรงมุมขวาบน 🟢 -->
+      <div class="w-full flex justify-end mb-4 -mt-2 md:-mt-6">
+        <button @click="router.push('/saved')" class="group inline-flex items-center gap-2 font-bold text-pink-500 bg-white border-2 border-pink-200 px-5 py-2.5 rounded-2xl shadow-[0_4px_0_0_#fbcfe8] hover:bg-pink-50 hover:border-pink-300 hover:shadow-[0_2px_0_0_#f9a8d4] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all">
+          สมุดจดเมนู <span class="group-hover:scale-125 transition-transform duration-300 text-lg">📖</span>
+        </button>
+      </div>
+      <!-- ============================================= -->
+
       <!-- ================= 1. กล่องบน: Header & รูปภาพ & แคลอรี่ ================= -->
       <div class="flex flex-col items-center mb-12 border-b-2 border-pink-100/50 pb-10">
         
@@ -21,20 +29,20 @@
 
         <!-- รูปอาหาร (โดดเด่นตรงกลาง) -->
         <div class="w-56 h-56 md:w-72 md:h-72 rounded-full border-4 border-pink-200 overflow-hidden shadow-xl mb-6 relative group">
-          <img :src="mockData.image" alt="Food Result" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"/>
+          <img :src="currentRecipe.image" alt="Food Result" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"/>
           <div class="absolute inset-0 bg-pink-500/10 rounded-full pointer-events-none"></div>
         </div>
 
         <!-- ชื่อเมนู -->
-        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 text-center mb-5 leading-snug">{{ mockData.menuName }}</h2>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 text-center mb-5 leading-snug">{{ currentRecipe.menuName }}</h2>
         
         <!-- ป้าย Tags (แคลอรี่ และ เวลา) -->
         <div class="flex flex-wrap gap-3 justify-center">
           <span class="inline-flex items-center gap-2 bg-rose-100 text-rose-600 px-6 py-2.5 rounded-2xl font-extrabold text-base shadow-sm border-2 border-rose-200 hover:scale-105 transition-transform cursor-default">
-            🔥 {{ mockData.calories }} kcal
+            🔥 {{ currentRecipe.calories }} kcal
           </span>
           <span class="inline-flex items-center gap-2 bg-blue-50 text-blue-500 px-6 py-2.5 rounded-2xl font-extrabold text-base shadow-sm border-2 border-blue-100 hover:scale-105 transition-transform cursor-default">
-            ⏱️ {{ mockData.time }} นาที
+            ⏱️ {{ currentRecipe.time }} นาที
           </span>
         </div>
       </div>
@@ -48,7 +56,7 @@
             <span class="text-3xl">🛒</span> สัดส่วนวัตถุดิบ
           </h3>
           <ul class="space-y-4">
-            <li v-for="(item, index) in mockData.ingredients" :key="index" class="flex justify-between items-center border-b-2 border-pink-100/50 pb-3 last:border-0 last:pb-0">
+            <li v-for="(item, index) in currentRecipe.ingredients" :key="index" class="flex justify-between items-center border-b-2 border-pink-100/50 pb-3 last:border-0 last:pb-0">
               <span class="text-gray-600 font-medium flex items-center gap-3 text-base">
                 <span class="w-2.5 h-2.5 rounded-full bg-pink-400"></span>
                 {{ item.name }}
@@ -66,7 +74,7 @@
             <span class="text-3xl">👩🏻‍🍳</span> วิธีการทำ
           </h3>
           <div class="space-y-5">
-            <div v-for="(step, index) in mockData.steps" :key="index" class="flex gap-4 md:gap-5 bg-white border-2 border-pink-100 rounded-3xl p-5 md:p-6 shadow-sm hover:border-pink-300 hover:shadow-md transition-all group">
+            <div v-for="(step, index) in currentRecipe.steps" :key="index" class="flex gap-4 md:gap-5 bg-white border-2 border-pink-100 rounded-3xl p-5 md:p-6 shadow-sm hover:border-pink-300 hover:shadow-md transition-all group">
               <div class="flex-shrink-0 w-12 h-12 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center font-extrabold text-xl group-hover:bg-pink-400 group-hover:text-white transition-colors shadow-inner">
                 {{ index + 1 }}
               </div>
@@ -82,7 +90,7 @@
       <!-- ================= 3. ส่วนล่างสุด: ปุ่ม Action ================= -->
       <!-- จัดเรียงปุ่มให้คู่กันบนจอคอม และเรียงซ้อนกันบนมือถือ -->
       <div class="flex flex-col md:flex-row justify-center gap-4 max-w-2xl mx-auto">
-        <button class="group flex-1 inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-[1.5rem] transition-all duration-200 bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
+        <button @click="saveRecipe" class="group flex-1 inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-[1.5rem] transition-all duration-200 bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
           <span class="mr-2 group-hover:scale-110 transition-transform">🍽️</span> บันทึกเมนูนี้
         </button>
         <button @click="router.push('/')" class="group flex-1 inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-[1.5rem] transition-all duration-200 text-pink-500 bg-white border-2 border-pink-200 shadow-[0_6px_0_0_#fbcfe8] hover:bg-pink-50 hover:border-pink-300 hover:shadow-[0_4px_0_0_#f9a8d4] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
@@ -96,11 +104,12 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { ref } from 'vue' 
 
 const router = useRouter()
 
-// ข้อมูลจำลอง (Mock Data) สำหรับแสดงผลรอเชื่อม API จริง
-const mockData = {
+// ใช้ ref เพื่อให้ Vue รู้จักและอัปเดตข้อมูลได้
+const currentRecipe = ref({
   menuName: "ข้าวผัดอกไก่คลีนไข่ข้น",
   image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80",
   calories: 350,
@@ -118,5 +127,36 @@ const mockData = {
     "ตอกไข่ไก่ลงไป ตีให้แตกแล้วเกลี่ยให้เคลือบข้าว รอจนไข่เริ่มเซ็ตตัว",
     "โรยต้นหอม ผัดให้เข้ากันอีกครั้ง ปิดเตา ตักเสิร์ฟได้เลย!"
   ]
+})
+
+// ฟังก์ชันสำหรับทำงานเมื่อกดปุ่ม "บันทึกเมนูนี้"
+const saveRecipe = () => {
+  try {
+    const existingSavedItems = localStorage.getItem('savedRecipes')
+    let savedArray = []
+
+    if (existingSavedItems) {
+      savedArray = JSON.parse(existingSavedItems)
+    }
+
+    const isAlreadySaved = savedArray.some(item => item.menuName === currentRecipe.value.menuName)
+
+    if (!isAlreadySaved) {
+      const newRecipeToSave = {
+        id: Date.now(), 
+        ...currentRecipe.value,
+        savedAt: new Date().toISOString()
+      }
+      
+      savedArray.unshift(newRecipeToSave) 
+      localStorage.setItem('savedRecipes', JSON.stringify(savedArray))
+    }
+
+    router.push('/saved')
+
+  } catch (error) {
+    console.error('พังจ้า บันทึกไม่ได้:', error)
+    alert('อุ๊ปส์! เกิดข้อผิดพลาดในการบันทึก ลองอีกครั้งนะ 🥺')
+  }
 }
 </script>
