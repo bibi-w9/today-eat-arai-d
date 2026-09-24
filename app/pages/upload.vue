@@ -127,11 +127,14 @@ const videoRef = ref(null)
 const canvasRef = ref(null)
 let videoStream = null
 
-// ฟังก์ชันเปิดกล้อง
+// สร้าง Global State เพื่อรอรับสูตรอาหารที่ Backend ส่งกลับมา
+const currentRecipeState = useState('currentRecipe', () => null)
+
+// 1. ฟังก์ชันเปิดกล้อง
 const startCamera = async () => {
   imagePreview.value = null // ล้างรูปเก่าออกก่อน
   isCameraOpen.value = true
-  
+
   try {
     // ขออนุญาตใช้งานกล้องจากเบราว์เซอร์ (ใช้ได้ทั้ง Laptop และ มือถือ)
     const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -147,7 +150,7 @@ const startCamera = async () => {
   }
 }
 
-// ฟังก์ชันปิดกล้อง
+// 2. ฟังก์ชันปิดกล้อง
 const stopCamera = () => {
   if (videoStream) {
     videoStream.getTracks().forEach(track => track.stop())
@@ -155,7 +158,7 @@ const stopCamera = () => {
   isCameraOpen.value = false
 }
 
-// ฟังก์ชันกดถ่ายรูป
+// 3. ฟังก์ชันกดถ่ายรูป
 const capturePhoto = () => {
   if (videoRef.value && canvasRef.value) {
     const video = videoRef.value
@@ -187,6 +190,7 @@ onBeforeUnmount(() => {
   stopCamera()
 })
 
+// 4. ฟังก์ชันเลือกรูปจากอัลบั้ม
 const handleFileChange = (event) => {
   const file = event.target.files[0]
   if (!file) return
@@ -195,29 +199,45 @@ const handleFileChange = (event) => {
   imagePreview.value = URL.createObjectURL(file)
 }
 
+// 5. ฟังก์ชันส่งข้อมูลไปหา Backend เพื่อให้ระบบ YOLO / Object Detection ตรวจจับวัตถุดิบ
 const analyzeIngredients = async () => {
-  if (!imagePreview.value) return
+  if (!imageFile.value) return // ต้องมีไฟล์ภาพจริง
   isLoading.value = true
   
   try {
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    console.log('--- ข้อมูลที่จะส่งให้ AI ---')
-    console.log('หมวดหมู่:', selectedCategory)
-    console.log('วิธีทำ:', selectedMethod)
-    console.log('รูปภาพ:', imageFile.value)
-    
-    alert(`พร้อมส่งข้อมูล!\nหมวด: ${selectedCategory}\nวิธีทำ: ${selectedMethod}\n\nเดี๋ยวเราไปทำ Backend API กันต่อเลย! 🚀`)
+    // 1. สร้าง FormData เพื่อเตรียมส่งไฟล์ภาพข้ามไปฝั่ง Backend
+    const formData = new FormData()
+    formData.append('image', imageFile.value)
+
+    // 2. ยิง API ไปที่ Backend ของคุณที่ต่อกับโมเดล YOLO (เช่น /api/detect หรือ /api/recipes/match)
+    // หรือถ้า Backend ของคุณรวมการ Detect ไว้ใน /api/recipes/match แล้ว ก็สามารถส่ง FormData ไปตรงๆ ได้เลย
+    const response = await $fetch('/api/recipes/match', {
+      method: 'POST',
+      body: {
+        // หากต้องการแยกสเต็ป ให้ส่งรูปไปdetectก่อน แล้วค่อยเอาผลลัพธ์มาส่ง 
+        // แต่นี่คือตัวอย่างการส่งข้อมูลที่ผ่านการประมวลผลจาก Backend แล้ว
+        category: selectedCategory, 
+        method: selectedMethod,
+        // (สมุดภาพ/ไฟล์จะถูกจัดการที่ฝั่ง Node.js Backend เพื่อส่งต่อให้ YOLO Model ทำงาน)
+      }
+    })
+
+    // 3. ตรวจสอบผลลัพธ์ที่ได้จากการ Match ของระบบ Rule-based
+    if (response && response.success && response.data.length > 0) {
+      // นำเมนูที่แมตช์ได้ดีที่สุด (Match % สูงสุด) ใส่ลงใน Global State
+      currentRecipeState.value = response.data[0] 
+      
+      // ไปยังหน้าแสดงผลลัพธ์
+      router.push('/result')
+    } else {
+      alert('ไม่พบเมนูที่ตรงกับวัตถุดิบในภาพ ลองถ่ายใหม่อีกครั้งนะ 🥺')
+    }
+
   } catch (error) {
-    console.error(error)
+    console.error('API Error:', error)
+    alert('ไม่สามารถเชื่อมต่อกับระบบตรวจสอบวัตถุดิบได้ ลองใหม่อีกครั้ง')
   } finally {
     isLoading.value = false
   }
-   router.push({ 
-    path: '/result', 
-    query: { 
-      category: route.query.category, // ดึงค่าเดิมมาจาก URL หน้าแรก
-      method: selectedMethod.value    // ส่งค่าใหม่ที่เพิ่งเลือกไปด้วย
-    } 
-  })
 }
 </script>

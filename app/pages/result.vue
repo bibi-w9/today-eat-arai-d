@@ -130,33 +130,26 @@ const currentRecipe = ref({
 })
 
 // ฟังก์ชันสำหรับทำงานเมื่อกดปุ่ม "บันทึกเมนูนี้"
-const saveRecipe = () => {
+// ฟังก์ชันสำหรับทำงานเมื่อกดปุ่ม "บันทึกเมนูนี้"
+const saveRecipe = async () => {
   try {
-    const existingSavedItems = localStorage.getItem('savedRecipes')
-    let savedArray = []
+    // ยิง HTTP POST ไปที่ backend ของเรา
+    const response = await $fetch('/api/recipes', {
+      method: 'POST',
+      body: currentRecipe.value
+    })
 
-    if (existingSavedItems) {
-      savedArray = JSON.parse(existingSavedItems)
+    if (response.success) {
+      alert(response.message)
+      router.push('/saved')
+    } else {
+      // กรณีเมนูนี้บันทึกซ้ำ
+      alert(response.message) 
     }
-
-    const isAlreadySaved = savedArray.some(item => item.menuName === currentRecipe.value.menuName)
-
-    if (!isAlreadySaved) {
-      const newRecipeToSave = {
-        id: Date.now(), 
-        ...currentRecipe.value,
-        savedAt: new Date().toISOString()
-      }
-      
-      savedArray.unshift(newRecipeToSave) 
-      localStorage.setItem('savedRecipes', JSON.stringify(savedArray))
-    }
-
-    router.push('/saved')
 
   } catch (error) {
     console.error('พังจ้า บันทึกไม่ได้:', error)
     alert('อุ๊ปส์! เกิดข้อผิดพลาดในการบันทึก ลองอีกครั้งนะ 🥺')
   }
 }
-</script>
+</script>>
