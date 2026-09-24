@@ -36,11 +36,11 @@
       <!-- ปุ่มถัดไป -->
       <button 
         @click="goToNextStep"
-        :disabled="!selectedMethod"
+        :disabled="!selectedMethod|| isSaving"
         class="group w-full inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         :class="selectedMethod ? 'bg-pink-400 text-white shadow-[0_6px_0_0_#be185d] hover:bg-pink-500 hover:shadow-[0_2px_0_0_#be185d] hover:translate-y-[4px] active:scale-95' : 'bg-gray-200 text-gray-400 shadow-[0_6px_0_0_#d1d5db]'"
       >
-        ต่อไป (แอบดูตู้เย็น) 👀
+         {{ isSaving ? 'กำลังบันทึก...' : 'ต่อไป (แอบดูตู้เย็น) 👀' }}
         <span class="group-hover:translate-x-2 transition-transform duration-300 ease-in-out ml-2">➭</span>
       </button>
 
@@ -56,6 +56,7 @@ const router = useRouter()
 const route = useRoute() 
 
 const selectedMethod = ref('')
+const isSaving = ref(false)
 
 // ข้อมูลวิธีการทำอาหารทั้งหมด (เก็บไว้เป็นฐานข้อมูลหลัก)
 const allMethods = [
@@ -80,15 +81,36 @@ const filteredMethods = computed(() => {
   return allMethods
 })
 
-const goToNextStep = () => {
-  if (!selectedMethod.value) return
-  
-  router.push({ 
-    path: '/upload', 
-    query: { 
-      category: route.query.category, 
-      method: selectedMethod.value    
-    } 
-  })
+const goToNextStep = async () => {
+  if (!selectedMethod.value || isSaving.value) return
+
+  const category = route.query.category
+  // กันคนเข้าหน้านี้ตรงๆ โดยไม่ผ่านหน้าเลือกหมวดหมู่
+  if (!category) {
+    router.replace('/category')
+    return
+  }
+
+  isSaving.value = true
+  try {
+    const res = await $fetch('/api/selections', {
+      method: 'POST',
+      body: { category, method: selectedMethod.value }
+    })
+
+    router.push({
+      path: '/upload',
+      query: {
+        category,
+        method: selectedMethod.value,
+        selectionId: res.data.selectionId
+      }
+    })
+  } catch (error) {
+    console.error('บันทึกตัวเลือกไม่สำเร็จ:', error)
+    alert('บันทึกตัวเลือกไม่สำเร็จ ลองอีกครั้งนะ 🥺')
+  } finally {
+    isSaving.value = false
+  }
 }
 </script>

@@ -94,8 +94,9 @@
 
       <!-- ปุ่ม Submit -->
       <button 
-        v-if="imagePreview"
+        v-if="imagePreview  || USE_MOCK_DETECTION"
         @click="analyzeIngredients"
+        :disabled="isLoading"
         class="group w-full inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-2xl transition-all duration-200 bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]"
       >
         <span v-if="isLoading" class="animate-spin mr-2">⏳</span>
@@ -114,8 +115,10 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 
-const selectedCategory = route.query.category || 'ไม่ได้เลือก'
-const selectedMethod = route.query.method || 'ไม่ได้เลือก'
+const selectedCategory = route.query.category || ''
+const selectedMethod = route.query.method || ''
+const selectionId = route.query.selectionId || ''
+const USE_MOCK_DETECTION = true
 
 const imagePreview = ref(null)
 const imageFile = ref(null)
@@ -130,6 +133,20 @@ let videoStream = null
 // สร้าง Global State เพื่อรอรับสูตรอาหารที่ Backend ส่งกลับมา
 const currentRecipeState = useState('currentRecipe', () => null)
 
+// ชื่อต้องตรงกับ ingredients[].name ในคอลเลกชัน recipes ทุกตัว
+// (recipeService เทียบชื่อแบบ exact match) ใส่ให้ครอบคลุมเพื่อให้เห็นผลการกรองชัด
+const MOCK_INGREDIENTS = [
+  'ไข่ไก่', 'อกไก่', 'ข้าวกล้อง', 'หมูสับ', 'แครอท',
+  'ต้นหอม', 'กะหล่ำปลี', 'เต้าหู้', 'กระเทียม', 'พริก'
+]
+// const response = await $fetch('/api/recipes/match', {
+//   method: 'POST',
+//   body: {
+//     selectionId,
+//     category: selectedCategory,
+//     method: selectedMethod,
+//   }
+// })
 // 1. ฟังก์ชันเปิดกล้อง
 const startCamera = async () => {
   imagePreview.value = null // ล้างรูปเก่าออกก่อน
@@ -201,38 +218,42 @@ const handleFileChange = (event) => {
 
 // 5. ฟังก์ชันส่งข้อมูลไปหา Backend เพื่อให้ระบบ YOLO / Object Detection ตรวจจับวัตถุดิบ
 const analyzeIngredients = async () => {
-  if (!imageFile.value) return // ต้องมีไฟล์ภาพจริง
+  // โหมดจริงต้องมีรูป แต่โหมด mock ไม่ต้อง
+  if (!USE_MOCK_DETECTION && !imageFile.value) return
   isLoading.value = true
-  
+
   try {
-    // 1. สร้าง FormData เพื่อเตรียมส่งไฟล์ภาพข้ามไปฝั่ง Backend
-    const formData = new FormData()
-    formData.append('image', imageFile.value)
+    let body
 
-    // 2. ยิง API ไปที่ Backend ของคุณที่ต่อกับโมเดล YOLO (เช่น /api/detect หรือ /api/recipes/match)
-    // หรือถ้า Backend ของคุณรวมการ Detect ไว้ใน /api/recipes/match แล้ว ก็สามารถส่ง FormData ไปตรงๆ ได้เลย
-    const response = await $fetch('/api/recipes/match', {
-      method: 'POST',
-      body: {
-        // หากต้องการแยกสเต็ป ให้ส่งรูปไปdetectก่อน แล้วค่อยเอาผลลัพธ์มาส่ง 
-        // แต่นี่คือตัวอย่างการส่งข้อมูลที่ผ่านการประมวลผลจาก Backend แล้ว
-        category: selectedCategory, 
+    if (USE_MOCK_DETECTION) {
+      // JSON: ไม่มีรูป ส่ง ingredients ปลอมไปตรงๆ
+      body = {
+        selectionId,
+        category: selectedCategory,
         method: selectedMethod,
-        // (สมุดภาพ/ไฟล์จะถูกจัดการที่ฝั่ง Node.js Backend เพื่อส่งต่อให้ YOLO Model ทำงาน)
+        ingredients: MOCK_INGREDIENTS
       }
-    })
-
-    // 3. ตรวจสอบผลลัพธ์ที่ได้จากการ Match ของระบบ Rule-based
-    if (response && response.success && response.data.length > 0) {
-      // นำเมนูที่แมตช์ได้ดีที่สุด (Match % สูงสุด) ใส่ลงใน Global State
-      currentRecipeState.value = response.data[0] 
-      
-      // ไปยังหน้าแสดงผลลัพธ์
-      router.push('/result')
     } else {
-      alert('ไม่พบเมนูที่ตรงกับวัตถุดิบในภาพ ลองถ่ายใหม่อีกครั้งนะ 🥺')
+      // multipart: ส่งรูปให้ backend เอาไปเข้า YOLO
+      // ห้ามใส่ Content-Type เอง ให้ browser ใส่ boundary ให้
+      body = new FormData()
+      body.append('image', imageFile.value)
+      body.append('selectionId', selectionId)
+      body.append('category', selectedCategory)
+      body.append('method', selectedMethod)
     }
 
+    const response = await $fetch('/api/recipes/match', {
+      method: 'POST',
+      body
+    })
+
+    if (response?.success && response.data.length > 0) {
+      currentRecipeState.value = response.data[0]
+      router.push('/result')
+    } else {
+      alert('ไม่พบเมนูที่ตรงกับวัตถุดิบ ลองใหม่อีกครั้งนะ 🥺')
+    }
   } catch (error) {
     console.error('API Error:', error)
     alert('ไม่สามารถเชื่อมต่อกับระบบตรวจสอบวัตถุดิบได้ ลองใหม่อีกครั้ง')
@@ -240,4 +261,44 @@ const analyzeIngredients = async () => {
     isLoading.value = false
   }
 }
+// const analyzeIngredients = async () => {
+//   if (!imageFile.value) return // ต้องมีไฟล์ภาพจริง
+//   isLoading.value = true
+  
+//   try {
+//     // 1. สร้าง FormData เพื่อเตรียมส่งไฟล์ภาพข้ามไปฝั่ง Backend
+//     const formData = new FormData()
+//     formData.append('image', imageFile.value)
+
+//     // 2. ยิง API ไปที่ Backend ของคุณที่ต่อกับโมเดล YOLO (เช่น /api/detect หรือ /api/recipes/match)
+//     // หรือถ้า Backend ของคุณรวมการ Detect ไว้ใน /api/recipes/match แล้ว ก็สามารถส่ง FormData ไปตรงๆ ได้เลย
+//     const response = await $fetch('/api/recipes/match', {
+//       method: 'POST',
+//       body: {
+//         // หากต้องการแยกสเต็ป ให้ส่งรูปไปdetectก่อน แล้วค่อยเอาผลลัพธ์มาส่ง 
+//         // แต่นี่คือตัวอย่างการส่งข้อมูลที่ผ่านการประมวลผลจาก Backend แล้ว
+//         category: selectedCategory, 
+//         method: selectedMethod,
+//         // (สมุดภาพ/ไฟล์จะถูกจัดการที่ฝั่ง Node.js Backend เพื่อส่งต่อให้ YOLO Model ทำงาน)
+//       }
+//     })
+
+//     // 3. ตรวจสอบผลลัพธ์ที่ได้จากการ Match ของระบบ Rule-based
+//     if (response && response.success && response.data.length > 0) {
+//       // นำเมนูที่แมตช์ได้ดีที่สุด (Match % สูงสุด) ใส่ลงใน Global State
+//       currentRecipeState.value = response.data[0] 
+      
+//       // ไปยังหน้าแสดงผลลัพธ์
+//       router.push('/result')
+//     } else {
+//       alert('ไม่พบเมนูที่ตรงกับวัตถุดิบในภาพ ลองถ่ายใหม่อีกครั้งนะ 🥺')
+//     }
+
+//   } catch (error) {
+//     console.error('API Error:', error)
+//     alert('ไม่สามารถเชื่อมต่อกับระบบตรวจสอบวัตถุดิบได้ ลองใหม่อีกครั้ง')
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
 </script>
