@@ -36,5 +36,433 @@
       "ใส่กระเพราผัดรวมกัน ปรุงรส"
     ],
     "caloriesTotal": 380
+  },
+  {
+    "name": "ข้าวผัดหมูใส่หอมใหญ่และมะเขือเทศ",
+    "cookingMethod": ["stir_fry"],
+    "categories": ["normal"],
+    "ingredients": [
+      { "name": "ข้าว", "amount": 1, "unit": "ถ้วย", "required": true },
+      { "name": "หมู", "amount": 100, "unit": "กรัม", "required": true },
+      { "name": "หอมใหญ่", "amount": 0.5, "unit": "หัว", "required": true },
+      { "name": "มะเขือเทศ", "amount": 0.5, "unit": "ลูก", "required": true },
+      { "name": "ไข่", "amount": 1, "unit": "ฟอง", "required": true },
+      { "name": "น้ำมัน", "amount": 1, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "น้ำปลา", "amount": 1, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "น้ำตาล", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "กระเทียมสับ", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "ซีอิ๊วขาว", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "ต้นหอมซอย", "amount": 1, "unit": "ต้น", "required": false }
+    ],
+    "steps": [
+      "ตั้งกระทะใส่น้ำมันให้ร้อน เจียวกระเทียมให้พอหอม",
+      "ใส่หมูลงไปผัดจนเริ่มสุก ตามด้วยไข่ไก่ผัดพอแตก",
+      "ใส่ข้าวสวย หอมใหญ่ และมะเขือเทศลงไปผัดให้เข้ากัน",
+      "ปรุงรสด้วย น้ำปลา น้ำตาล และซีอิ๊วขาว ผัดด้วยไฟแรงจนแห้งเข้ากันดี",
+      "โรยต้นหอมซอย ผัดอีกครึ่งวินาทีแล้วยกเสิร์ฟ"
+    ],
+    "caloriesTotal": 580
+  },
+  {
+    "name": "ไข่เจียวหมูสับใส่หอมใหญ่",
+    "cookingMethod": ["fry"],
+    "categories": ["normal"],
+    "ingredients": [
+      { "name": "ไข่", "amount": 2, "unit": "ฟอง", "required": true },
+      { "name": "หมู", "amount": 50, "unit": "กรัม", "required": true },
+      { "name": "หอมใหญ่หั่นเต๋า", "amount": 2, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "น้ำมัน", "amount": 3, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "น้ำปลา", "amount": 1, "unit": "ช้อนชา", "required": true },
+      { "name": "รสดี", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "ซอสพริก", "amount": 2, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "พริกไทยป่น", "amount": 0.5, "unit": "ช้อนชา", "required": false }
+    ],
+    "steps": [
+      "ตอกไข่ใส่ชาม ใส่หมูสับ หอมใหญ่ พริกไทยป่น รสดี และน้ำปลา",
+      "ตีผสมส่วนผสมทั้งหมดให้เข้ากันจนฟู",
+      "ตั้งกระทะใส่น้ำมันใช้ไฟปานกลางค่อนข้างแรง รอจนน้ำมันร้อน",
+      "เทไข่ลงทอด ทอดจนเหลืองกรอบทั้งสองด้าน",
+      "ตักขึ้นสะเด็ดน้ำมัน เสิร์ฟคู่กับซอสพริก"
+    ],
+    "caloriesTotal": 480
+  },
+  {
+    "name": "ต้มยำกุ้งน้ำใสใส่เห็ดออริจิ",
+    "cookingMethod": ["boil"],
+    "categories": ["normal"],
+    "ingredients": [
+      { "name": "กุ้ง", "amount": 8, "unit": "ตัว", "required": true },
+      { "name": "เห็ดออริจิหั่นชิ้น", "amount": 1, "unit": "ต้น", "required": true },
+      { "name": "มะเขือเทศ", "amount": 1, "unit": "ลูก", "required": true },
+      { "name": "น้ำปลา", "amount": 2, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "มะนาว", "amount": 2, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "พริก", "amount": 5, "unit": "เม็ด", "required": true },
+      { "name": "ผงชูรส", "amount": 0.1, "unit": "ช้อนชา", "required": true },
+      { "name": "ชุดเครื่องต้มยำ [ข่า ตะไคร้ ใบมะกรูด]", "amount": 1, "unit": "ชุด", "required": false },
+      { "name": "น้ำเปล่า", "amount": 2, "unit": "ถ้วย", "required": false },
+      { "name": "ผักชีฝรั่ง", "amount": 1, "unit": "ต้น", "required": false }
+    ],
+    "steps": [
+      "ตั้งหม้อใส่น้ำเปล่า ต้มจนเดือดแล้วใส่ชุดเครื่องต้มยำ",
+      "ใส่เห็ดออริจิและมะเขือเทศลงไปต้มจนเริ่มสุก",
+      "ใส่กุ้งลงไปต้มจนสุกพอดี (ระวังอย่าเติมนานกุ้งจะแข็ง)",
+      "ปิดไฟ ปรุงรสด้วยน้ำปลา มะนาว พริกโขลก และผงชูรส",
+      "โรยผักชีฝรั่ง พร้อมเสิร์ฟ"
+    ],
+    "caloriesTotal": 180
+  },
+  {
+    "name": "บะหมี่กึ่งสำเร็จรูปอบไข่และกุ้ง",
+    "cookingMethod": ["microwave"],
+    "categories": ["normal"],
+    "ingredients": [
+      { "name": "บะหมี่กึ่งสำเร็จรูป", "amount": 1, "unit": "ซอง", "required": true },
+      { "name": "ไข่", "amount": 1, "unit": "ฟอง", "required": true },
+      { "name": "กุ้ง", "amount": 3, "unit": "ตัว", "required": true },
+      { "name": "ผงปรุงรสบะหมี่", "amount": 1, "unit": "ซอง", "required": true },
+      { "name": "น้ำเปล่า", "amount": 1, "unit": "ถ้วย", "required": false },
+      { "name": "กระเทียมเจียว", "amount": 1, "unit": "ช้อนชา", "required": false },
+      { "name": "ต้นหอมซอย", "amount": 1, "unit": "ต้น", "required": false }
+    ],
+    "steps": [
+      "ใส่เส้นบะหมี่กึ่งสำเร็จรูปและผงปรุงรสลงในชามสำหรับไมโครเวฟ เติมน้ำเปล่า",
+      "วางกุ้งและตอกไข่ไก่ไว้ด้านบน",
+      "นำเข้าไมโครเวฟด้วยความร้อนสูงประมาณ 3-4 นาทีจนสุก",
+      "นำออกจากไมโครเวฟ โรยกระเทียมเจียวและต้นหอมซอย"
+    ],
+    "caloriesTotal": 380
+  },
+  {
+    "name": "แกงจืดไข่น้ำหมูสับผักบุ้ง",
+    "cookingMethod": ["fry", "boil"],
+    "categories": ["normal"],
+    "ingredients": [
+      { "name": "ไข่", "amount": 1, "unit": "ฟอง", "required": true },
+      { "name": "หมู", "amount": 50, "unit": "กรัม", "required": true },
+      { "name": "ผักบุ้งหั่นท่อน", "amount": 1, "unit": "กำมือ", "required": true },
+      { "name": "น้ำมัน", "amount": 1, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "รสดี", "amount": 1, "unit": "ช้อนชา", "required": true },
+      { "name": "เกลือ", "amount": 0.1, "unit": "ช้อนชา", "required": true },
+      { "name": "น้ำเปล่า", "amount": 2, "unit": "ถ้วย", "required": false },
+      { "name": "กระเทียมสับ", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "พริกไทยป่น", "amount": 0.5, "unit": "ช้อนชา", "required": false }
+    ],
+    "steps": [
+      "ทอดไข่ดาว/ไข่เจียวด้วยน้ำมัน พอกรอบแล้วหั่นเป็นชิ้นพอดีคำ พักไว้",
+      "ต้มน้ำเปล่าจนเดือด ใส่กระเทียมสับ เกลือ และรสดี",
+      "ปั้นหมูสับเป็นก้อนลงต้มจนสุก",
+      "ใส่ผักบุ้งและไข่ทอดลงไป ต้มพอผักสลด",
+      "ตักใส่ชาม โรยพริกไทยป่น"
+    ],
+    "caloriesTotal": 290
+  },
+  {
+    "name": "สเต็กอกไก่ย่างเกลือ",
+    "cookingMethod": ["fry"],
+    "categories": ["high_protein"],
+    "ingredients": [
+      { "name": "ไก่ [อกไก่]", "amount": 200, "unit": "กรัม", "required": true },
+      { "name": "เกลือ", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "พริกไทยดำป่น", "amount": 1, "unit": "ช้อนชา", "required": false },
+      { "name": "น้ำมันมะกอก", "amount": 1, "unit": "ช้อนชา", "required": false }
+    ],
+    "steps": [
+      "นำอกไก่มาหมักด้วยเกลือ พริกไทยดำป่น และน้ำมันมะกอก หมักทิ้งไว้ 15 นาที",
+      "ตั้งกระทะสำหรับย่างใช้ไฟปานกลาง",
+      "นำอกไก่ลงย่าง จนสุกทั่วทั้งสองด้าน",
+      "หักพักไว้ 2 นาที ก่อนจัดใส่จานเสิร์ฟ"
+    ],
+    "caloriesTotal": 280
+  },
+  {
+    "name": "กะเพรากุ้งและไก่สับ",
+    "cookingMethod": ["stir_fry"],
+    "categories": ["high_protein"],
+    "ingredients": [
+      { "name": "ไก่สับ", "amount": 100, "unit": "กรัม", "required": true },
+      { "name": "กุ้ง", "amount": 5, "unit": "ตัว", "required": true },
+      { "name": "กะเพรา", "amount": 1, "unit": "กำมือ", "required": true },
+      { "name": "น้ำมัน", "amount": 1, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "พริก", "amount": 5, "unit": "เม็ด", "required": true },
+      { "name": "น้ำปลา", "amount": 1, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "น้ำตาล", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "กระเทียมสับ", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "ซอสหอยนางรม", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "ซีอิ๊วดำ", "amount": 0.5, "unit": "ช้อนชา", "required": false }
+    ],
+    "steps": [
+      "ตั้งกระทะใส่น้ำมัน ผัดพริกและกระเทียมสับให้หอม",
+      "ใส่ไก่สับลงไปผัดจนเริ่มสุก แล้วใส่กุ้งตามลงไป",
+      "ปรุงรสด้วย น้ำปลา ซอสหอยนางรม น้ำตาล และซีอิ๊วดำ ผัดด้วยไฟแรง",
+      "ใส่ใบกะเพรา ผัดสลัดอย่างรวดเร็วแล้วปิดไฟเสิร์ฟ"
+    ],
+    "caloriesTotal": 320
+  },
+  {
+    "name": "อกไก่นึ่งมะนาว",
+    "cookingMethod": ["steamed"],
+    "categories": ["high_protein"],
+    "ingredients": [
+      { "name": "ไก่ [อกไก่]", "amount": 150, "unit": "กรัม", "required": true },
+      { "name": "มะนาว", "amount": 2, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "พริก", "amount": 5, "unit": "เม็ด", "required": true },
+      { "name": "น้ำปลา", "amount": 2, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "น้ำตาล", "amount": 1, "unit": "ช้อนชา", "required": true },
+      { "name": "กระเทียมสับ", "amount": 2, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "รากผักชี", "amount": 2, "unit": "ราก", "required": false }
+    ],
+    "steps": [
+      "นำอกไก่ไปนึ่งพร้อมรากผักชีประมาณ 15 นาทีจนไก่สุกฉ่ำ",
+      "ทำน้ำราดโดยผสม น้ำมะนาว น้ำปลา น้ำตาล พริก และกระเทียมสับ ให้เข้ากัน",
+      "หั่นอกไก่นึ่งเป็นชิ้น จัดใส่จาน ราดด้วยน้ำมะนาวที่เตรียมไว้"
+    ],
+    "caloriesTotal": 210
+  },
+  {
+    "name": "ซุปไก่ก้อนใส่ไข่",
+    "cookingMethod": ["boil"],
+    "categories": ["high_protein"],
+    "ingredients": [
+      { "name": "ไก่สับปั้นก้อน", "amount": 150, "unit": "กรัม", "required": true },
+      { "name": "ไข่", "amount": 2, "unit": "ฟอง", "required": true },
+      { "name": "เกลือ", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "รสดี", "amount": 1, "unit": "ช้อนชา", "required": true },
+      { "name": "น้ำเปล่า", "amount": 2, "unit": "ถ้วย", "required": false },
+      { "name": "ขึ้นฉ่าย", "amount": 1, "unit": "ต้น", "required": false }
+    ],
+    "steps": [
+      "ต้มน้ำเปล่าให้เดือด ปรุงรสด้วยเกลือและรสดี",
+      "ใส่ไก่สับปั้นก้อนลงไปต้มจนสุกและลอยขึ้นมา",
+      "ตอกไข่ไก่ ตีพอแตกแล้วค่อยๆ เทเป็นสายลงในน้ำซุปขณะที่หม้อกำลังเดือด",
+      "ยกลงจากเตา โรยหน้าด้วยขึ้นฉ่าย"
+    ],
+    "caloriesTotal": 310
+  },
+  {
+    "name": "ไข่ตุ๋นกุ้งสับอกไก่",
+    "cookingMethod": ["microwave"],
+    "categories": ["high_protein"],
+    "ingredients": [
+      { "name": "ไข่", "amount": 3, "unit": "ฟอง", "required": true },
+      { "name": "กุ้งสับ", "amount": 3, "unit": "ตัว", "required": true },
+      { "name": "ไก่สับ", "amount": 50, "unit": "กรัม", "required": true },
+      { "name": "เกลือ", "amount": 0.1, "unit": "ช้อนชา", "required": true },
+      { "name": "รสดี", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "น้ำเปล่า", "amount": 1, "unit": "ถ้วย", "required": false },
+      { "name": "ซีอิ๊วขาว", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "ต้นหอมซอย", "amount": 1, "unit": "ต้น", "required": false }
+    ],
+    "steps": [
+      "ตีไข่ไก่ ผสมกับน้ำเปล่า ปรุงรสด้วยเกลือ รสดี และซีอิ๊วขาว",
+      "ใส่ไก่สับลงไปผสมให้เข้ากัน เทใส่ภาชนะสำหรับไมโครเวฟ",
+      "วางกุ้งสับไว้ด้านบน นำเข้าไมโครเวฟใช้ไฟปานกลางประมาณ 5-7 นาที",
+      "นำออกจากเตา โรยหน้าด้วยต้นหอมซอย"
+    ],
+    "caloriesTotal": 300
+  },
+  {
+    "name": "ข้าวผัดอกไก่ใส่แครอทและเห็ดออริจิ (ผัดน้ำ)",
+    "cookingMethod": ["stir_fry"],
+    "categories": ["Healthy"],
+    "ingredients": [
+      { "name": "ข้าว", "amount": 1, "unit": "ถ้วย", "required": true },
+      { "name": "ไก่", "amount": 100, "unit": "กรัม", "required": true },
+      { "name": "แครอทเต๋า", "amount": 2, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "เห็ดออริจิหั่นเต๋า", "amount": 2, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "เกลือ", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "น้ำตาล", "amount": 0.1, "unit": "ช้อนชา", "required": true },
+      { "name": "น้ำเปล่า (สำหรับผัด)", "amount": 2, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "กระเทียมสับ", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "ซีอิ๊วขาวลดโซเดียม", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false }
+    ],
+    "steps": [
+      "ตั้งกระทะ ใส่น้ำเปล่าแทนน้ำมัน รอน้ำเดือดผัดกระเทียมสับให้หอม",
+      "ใสอกไก่ลงไปผัดจนสุก ตามด้วยแครอทและเห็ดออริจิ",
+      "ใส่ข้าวสวย ปรุงรสด้วยซีอิ๊วขาวลดโซเดียม เกลือ และน้ำตาล",
+      "ผัดให้ส่วนผสมทั้งหมดแห้งและเข้ากันดี ตักใส่จาน"
+    ],
+    "caloriesTotal": 330
+  },
+  {
+    "name": "แกงจืดผักบุ้งหอมใหญ่ไข่ขาว",
+    "cookingMethod": ["boil"],
+    "categories": ["Healthy"],
+    "ingredients": [
+      { "name": "ผักบุ้ง", "amount": 1, "unit": "กำมือ", "required": true },
+      { "name": "หอมใหญ่", "amount": 0.5, "unit": "หัว", "required": true },
+      { "name": "ไข่ [เฉพาะไข่ขาว]", "amount": 3, "unit": "ฟอง", "required": true },
+      { "name": "เกลือ", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "น้ำซุปผัก", "amount": 2, "unit": "ถ้วย", "required": false },
+      { "name": "พริกไทยป่น", "amount": 0.5, "unit": "ช้อนชา", "required": false }
+    ],
+    "steps": [
+      "ต้มน้ำซุปผักให้เดือด ใส่หอมใหญ่ลงไปต้มให้นุ่มและได้ความหวาน",
+      "ค่อยๆ เทไข่ขาวลงไป ค่อยๆ คนให้เป็นเส้นกระจายสวยงาม",
+      "ใส่ผักบุ้ง ปรุงรสด้วยเกลือ ต้มพอผักสลดแล้วปิดไฟทันที",
+      "ตักใส่ชาม โรยพริกไทยป่น"
+    ],
+    "caloriesTotal": 110
+  },
+  {
+    "name": "เห็ดออริจิและแครอทนึ่งจิ้มแจ่ว",
+    "cookingMethod": ["steamed"],
+    "categories": ["Healthy"],
+    "ingredients": [
+      { "name": "เห็ดออริจิ", "amount": 2, "unit": "ต้น", "required": true },
+      { "name": "แครอทหั่นท่อน", "amount": 0.5, "unit": "หัว", "required": true },
+      { "name": "น้ำปลา", "amount": 1, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "มะนาว", "amount": 1, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "พริกป่น", "amount": 1, "unit": "ช้อนชา", "required": true },
+      { "name": "ข้าวคั่ว", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "หอมแดงซอย", "amount": 2, "unit": "หัว", "required": false },
+      { "name": "ผักชี", "amount": 1, "unit": "ต้น", "required": false }
+    ],
+    "steps": [
+      "นำเห็ดออริจิและแครอทไปนึ่งในซึ้งประมาณ 10 นาทีจนสุกนุ่ม",
+      "ทำน้ำจิ้มแจ่วโดยผสม น้ำปลา น้ำมะนาว พริกป่น ข้าวคั่ว และหอมแดงซอย",
+      "จัดผักนึ่งใส่จาน โรยผักชีบนน้ำจิ้มแจ่ว พร้อมเสิร์ฟ"
+    ],
+    "caloriesTotal": 120
+  },
+  {
+    "name": "กุ้งย่างเกลือเคียงมะเขือเทศ",
+    "cookingMethod": ["fry"],
+    "categories": ["Healthy"],
+    "ingredients": [
+      { "name": "กุ้ง", "amount": 8, "unit": "ตัว", "required": true },
+      { "name": "มะเขือเทศหั่นแว่น", "amount": 1, "unit": "ลูก", "required": true },
+      { "name": "เกลือ", "amount": 0.1, "unit": "ช้อนชา", "required": true },
+      { "name": "พริกไทยดำบด", "amount": 1, "unit": "ช้อนชา", "required": false },
+      { "name": "ผักสลัด", "amount": 1, "unit": "กำมือ", "required": false }
+    ],
+    "steps": [
+      "โรยเกลือและพริกไทยดำบดบนตัวกุ้งให้ทั่ว",
+      "นำกุ้งลงไปย่างบนกระทะเทฟลอนแบบไม่ใช้น้ำมันจนกุ้งสุกส้ม",
+      "จัดจานวางผักสลัดและมะเขือเทศหั่นแว่น แล้ววางกุ้งย่างทับพร้อมเสิร์ฟ"
+    ],
+    "caloriesTotal": 150
+  },
+  {
+    "name": "อกไก่อบสมุนไพร",
+    "cookingMethod": ["microwave"],
+    "categories": ["Healthy"],
+    "ingredients": [
+      { "name": "ไก่ [อกไก่]", "amount": 150, "unit": "กรัม", "required": true },
+      { "name": "เกลือ", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "รสดี [สูตรลดโซเดียม]", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "ตะไคร้ซอย", "amount": 1, "unit": "ต้น", "required": false },
+      { "name": "ใบมะกรูดฉีก", "amount": 3, "unit": "ใบ", "required": false }
+    ],
+    "steps": [
+      "หมักอกไก่ด้วยเกลือ รสดีสูตรลดโซเดียม ตะไคร้ซอย และใบมะกรูดฉีก ทิ้งไว้ 10 นาที",
+      "นำอกไก่ใส่ภาชนะทนความร้อน ปิดฝาหรือใช้พลาสติกถนอมอาหารคลุม",
+      "นำเข้าไมโครเวฟไฟปานกลางประมาณ 4-5 นาทีจนสุกทั่ว"
+    ],
+    "caloriesTotal": 190
+  },
+  {
+    "name": "กะเพราเห็ดออริจิ",
+    "cookingMethod": ["stir_fry"],
+    "categories": ["Vegan"],
+    "ingredients": [
+      { "name": "เห็ดออริจิหั่นชิ้น", "amount": 2, "unit": "ต้น", "required": true },
+      { "name": "กะเพรา", "amount": 1, "unit": "กำมือ", "required": true },
+      { "name": "น้ำมัน", "amount": 1, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "พริก", "amount": 5, "unit": "เม็ด", "required": true },
+      { "name": "น้ำตาล", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "เกลือ", "amount": 0.1, "unit": "ช้อนชา", "required": true },
+      { "name": "ซอสเห็ดหอมเจ", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "ซีอิ๊วขาวเจ", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "กระเทียมสับ", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false }
+    ],
+    "steps": [
+      "ตั้งกระทะใส่น้ำมัน ผัดกระเทียมสับและพริกจนหอม",
+      "ใส่เห็ดออริจิลงไปผัดจนเริ่มนุ่ม",
+      "ปรุงรสด้วย ซอสเห็ดหอมเจ ซีอิ๊วขาวเจ เกลือ และน้ำตาล",
+      "ใส่ใบกะเพรา ผัดด้วยไฟแรงสั้นๆ แล้วยกลงเสิร์ฟ"
+    ],
+    "caloriesTotal": 160
+  },
+  {
+    "name": "ซุปใสมะเขือเทศแครอทและหอมใหญ่",
+    "cookingMethod": ["boil"],
+    "categories": ["Vegan"],
+    "ingredients": [
+      { "name": "มะเขือเทศ", "amount": 1, "unit": "ลูก", "required": true },
+      { "name": "แครอท", "amount": 0.5, "unit": "หัว", "required": true },
+      { "name": "หอมใหญ่", "amount": 0.5, "unit": "หัว", "required": true },
+      { "name": "เกลือ", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "น้ำตาล", "amount": 1, "unit": "ช้อนชา", "required": true },
+      { "name": "น้ำเปล่า", "amount": 2, "unit": "ถ้วย", "required": false },
+      { "name": "ซีอิ๊วขาวเจ", "amount": 1, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "พริกไทยป่น", "amount": 0.5, "unit": "ช้อนชา", "required": false }
+    ],
+    "steps": [
+      "ตั้งหม้อใส่น้ำเปล่าจนเดือด ใส่หอมใหญ่ แครอท และมะเขือเทศ",
+      "หรี่ไฟลง ต้มเคี่ยวเรื่อยๆ จนผักสุกนุ่มและน้ำซุปมีความหวานจากผัก",
+      "ปรุงรสด้วย เกลือ น้ำตาล ซีอิ๊วขาวเจ",
+      "ตักใส่ชาม โรยพริกไทยป่นก่อนเสิร์ฟ"
+    ],
+    "caloriesTotal": 90
+  },
+  {
+    "name": "เห็ดออริจิชุบแป้งทอดกรอบ",
+    "cookingMethod": ["fry"],
+    "categories": ["Vegan"],
+    "ingredients": [
+      { "name": "เห็ดออริจิหั่นแท่ง", "amount": 2, "unit": "ต้น", "required": true },
+      { "name": "น้ำมัน (สำหรับทอด)", "amount": 10, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "เกลือ", "amount": 0.1, "unit": "ช้อนชา", "required": true },
+      { "name": "แป้งทอดกรอบเจ", "amount": 3, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "น้ำเย็นจัด", "amount": 3, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "ซอสพริกเจ", "amount": 2, "unit": "ช้อนโต๊ะ", "required": false }
+    ],
+    "steps": [
+      "ผสมแป้งทอดกรอบเจ เกลือ และน้ำเย็นจัดเข้าด้วยกัน ให้ได้ความข้นกำลังดี",
+      "นำเห็ดออริจิลงไปคลุกชุบแป้งให้ทั่ว",
+      "ตั้งกระทะใส่น้ำมัน ใช้ไฟปานกลาง นำเห็ดลงทอดจนเหลืองกรอบ",
+      "ตักขึ้นพักให้สะเด็ดน้ำมัน เสิร์ฟพร้อมซอสพริกเจ"
+    ],
+    "caloriesTotal": 310
+  },
+  {
+    "name": "แกงเผ็ดเห็ดออริจิใส่แครอท",
+    "cookingMethod": ["boil"],
+    "categories": ["Vegan"],
+    "ingredients": [
+      { "name": "เห็ดออริจิ", "amount": 1, "unit": "ต้น", "required": true },
+      { "name": "แครอท", "amount": 0.5, "unit": "หัว", "required": true },
+      { "name": "เกลือ", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "น้ำตาล", "amount": 1, "unit": "ช้อนโต๊ะ", "required": true },
+      { "name": "พริกแกงเผ็ดเจ", "amount": 2, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "กะทิ", "amount": 250, "unit": "ml", "required": false },
+      { "name": "ใบโหระพา", "amount": 1, "unit": "กำมือ", "required": false }
+    ],
+    "steps": [
+      "ตั้งหม้อแบ่งกะทิลงไปเคี่ยวกับพริกแกงเผ็ดเจจนเริ่มหอมแตกมัน",
+      "เติมกะทิส่วนที่เหลือ ใส่เห็ดออริจิและแครอทลงไปต้มจนสุก",
+      "ปรุงรสด้วยเกลือและน้ำตาล",
+      "ใส่ใบโหระพา ปิดไฟและจัดเสิร์ฟ"
+    ],
+    "caloriesTotal": 350
+  },
+  {
+    "name": "เห็ดออริจิย่างซีอิ๊ว",
+    "cookingMethod": ["fry"],
+    "categories": ["Vegan"],
+    "ingredients": [
+      { "name": "เห็ดออริจิฝานแผ่นหนา", "amount": 2, "unit": "ต้น", "required": true },
+      { "name": "น้ำตาล", "amount": 0.5, "unit": "ช้อนชา", "required": true },
+      { "name": "ซีอิ๊วขาวเจ", "amount": 2, "unit": "ช้อนโต๊ะ", "required": false },
+      { "name": "น้ำมันงา", "amount": 1, "unit": "ช้อนชา", "required": false },
+      { "name": "งาขาวคั่ว", "amount": 1, "unit": "ช้อนชา", "required": false }
+    ],
+    "steps": [
+      "ผสมซีอิ๊วขาวเจ น้ำตาล และน้ำมันงาให้เข้ากัน นำเห็ดออริจิลงไปคลุกหมักไว้ 5 นาที",
+      "ตั้งกระทะเทฟลอน นำเห็ดลงไปย่างด้วยไฟปานกลางจนสุกและสีกระทะสวยทั้งสองด้าน",
+      "ตักใส่จาน โรยด้วยงาขาวคั่วก่อนเสิร์ฟ"
+    ],
+    "caloriesTotal": 120
   }
+
 ]

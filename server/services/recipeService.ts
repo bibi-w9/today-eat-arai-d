@@ -1,21 +1,33 @@
-import { Recipe } from '~~/database/models/Recipe'
-import { connectDB } from '~~/database/connection'
+import { Recipe } from '../models/Recipe' 
 
-export async function findMatchingRecipes(userIngredients: string[], category?: string) {
+export async function findMatchingRecipes(userIngredients: string[] = [], category?: string) {
+  // 1. สั่งเชื่อมต่อ DB เสมอก่อน Query (ใช้ Auto-import จาก server/utils)
   await connectDB()
 
   const query: any = {}
-  if (category) query.categories = category
+  if (category) {
+    query.categories = category
+  }
 
-  const recipes = await Recipe.find(query)
+  const recipes = await Recipe.find(query).lean()
 
-  return recipes.map(recipe => {
-    const requiredNames = recipe.ingredients
-      .filter(i => i.required)
-      .map(i => i.name)
+  // 2. ป้องกันกรณี userIngredients ส่งมาไม่ใช่ Array
+  const safeUserIngredients = Array.isArray(userIngredients) ? userIngredients : []
 
-    const matched = requiredNames.filter(name => userIngredients.includes(name))
-    const missing = requiredNames.filter(name => !userIngredients.includes(name))
+  const results = recipes.map((recipe: any) => {
+    // 3. ป้องกันกรณีเมนูใน DB ไม่มี ingredients หรือเป็น null
+    const ingredientsList = Array.isArray(recipe.ingredients) ? recipe.ingredients : []
+
+    const requiredNames = ingredientsList
+      .filter((i: any) => i && i.required && i.name)
+      .map((i: any) => i.name)
+
+    const matched = requiredNames.filter((name: string) => safeUserIngredients.includes(name))
+    const missing = requiredNames.filter((name: string) => !safeUserIngredients.includes(name))
+
+    const matchPercent = requiredNames.length > 0 
+      ? Math.round((matched.length / requiredNames.length) * 100) 
+      : 0
 
     return {
       _id: recipe._id,
@@ -24,9 +36,13 @@ export async function findMatchingRecipes(userIngredients: string[], category?: 
       categories: recipe.categories,
       steps: recipe.steps,
       caloriesTotal: recipe.caloriesTotal,
-      matchPercent: Math.round((matched.length / requiredNames.length) * 100),
+      matchPercent,
       matched,
       missing
     }
-  }).sort((a, b) => b.matchPercent - a.matchPercent)
+  })
+
+  return results
+    .filter((recipe: any) => recipe.matchPercent >= 50)
+    .sort((a: any, b: any) => b.matchPercent - a.matchPercent)
 }
