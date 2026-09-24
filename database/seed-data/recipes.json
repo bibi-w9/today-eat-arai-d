@@ -1,0 +1,40 @@
+[
+  {
+    "name": "ข้าวผัดไข่",
+    "cookingMethod": ["stir_fry"],
+    "categories": ["normal", "high_protein"],
+    "ingredients": [
+      { "name": "ข้าว", "amount": 1, "unit": "cup", "required": true },
+      { "name": "ไข่", "amount": 2, "unit": "piece", "required": true },
+      { "name": "ต้นหอม", "amount": 10, "unit": "g", "required": false },
+      { "name": "น้ำมันพืช", "amount": 15, "unit": "ml", "required": true }
+    ],
+    "steps": [
+      "ตอกไข่ลงชามแล้วตีให้เข้ากัน",
+      "ตั้งกระทะใส่น้ำมัน รอให้ร้อน",
+      "ใส่ไข่ลงผัดให้สุก",
+      "ใส่ข้าวลงผัดรวมกัน ปรุงรส",
+      "โรยต้นหอมก่อนเสิร์ฟ"
+    ],
+    "caloriesTotal": 450
+  },
+  {
+    "name": "ผัดกระเพราหมู",
+    "cookingMethod": ["stir_fry"],
+    "categories": ["normal", "high_protein", "spicy"],
+    "ingredients": [
+      { "name": "หมูสับ", "amount": 150, "unit": "g", "required": true },
+      { "name": "กระเพรา", "amount": 20, "unit": "g", "required": true },
+      { "name": "พริก", "amount": 10, "unit": "g", "required": true },
+      { "name": "กระเทียม", "amount": 10, "unit": "g", "required": true },
+      { "name": "น้ำมันพืช", "amount": 15, "unit": "ml", "required": true }
+    ],
+    "steps": [
+      "โขลกพริกกับกระเทียม",
+      "ตั้งกระทะใส่น้ำมัน ผัดพริกกระเทียมให้หอม",
+      "ใส่หมูสับผัดให้สุก",
+      "ใส่กระเพราผัดรวมกัน ปรุงรส"
+    ],
+    "caloriesTotal": 380
+  }
+]
