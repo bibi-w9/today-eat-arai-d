@@ -61,7 +61,7 @@ const isSaving = ref(false)
 // ข้อมูลวิธีการทำอาหารทั้งหมด (เก็บไว้เป็นฐานข้อมูลหลัก)
 const allMethods = [
   { id: 'fry', label: 'ทอด', icon: '🍳' },
-  { id: 'stir-fry', label: 'ผัด', icon: '🥘' },
+  { id: 'stir_fry', label: 'ผัด', icon: '🥘' },
   { id: 'boil', label: 'ต้ม / แกง', icon: '🍲' },
   { id: 'bake', label: 'ย่าง / อบ', icon: '🔥' },
   { id: 'steam', label: 'นึ่ง', icon: '🥟' },
@@ -81,6 +81,8 @@ const filteredMethods = computed(() => {
   return allMethods
 })
 
+const matchedRecipesState = useState('matchedRecipes', () => [])
+
 const goToNextStep = async () => {
   if (!selectedMethod.value || isSaving.value) return
 
@@ -93,19 +95,23 @@ const goToNextStep = async () => {
 
   isSaving.value = true
   try {
-    const res = await $fetch('/api/selections', {
+    const mockIngredients = ['ไข่', 'ข้าว', 'หมู']
+// 2. ข้ามการบันทึก Selection ไปเรียก API จับคู่เมนูโดยตรง
+    const response = await $fetch('/api/recipes/match', {
       method: 'POST',
-      body: { category, method: selectedMethod.value }
-    })
-
-    router.push({
-      path: '/upload',
-      query: {
-        category,
+      body: { 
+        category: category, 
         method: selectedMethod.value,
-        selectionId: res.data.selectionId
+        ingredients: mockIngredients
       }
     })
+
+    if (response?.success && response.data.length > 0) {
+  matchedRecipesState.value = response.data // บันทึกข้อมูลทั้ง 5 เมนู
+  router.push('/result')
+    } else {
+      alert('ไม่พบเมนูที่ตรงกับวัตถุดิบในฐานข้อมูล 🥺')
+    }
   } catch (error) {
     console.error('บันทึกตัวเลือกไม่สำเร็จ:', error)
     alert('บันทึกตัวเลือกไม่สำเร็จ ลองอีกครั้งนะ 🥺')

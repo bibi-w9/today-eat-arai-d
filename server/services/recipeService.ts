@@ -17,6 +17,9 @@ export async function findMatchingRecipes(
 
   const recipes = await Recipe.find(query).lean()
 
+  console.log('Query Object:', query)
+  console.log('Recipes Found in DB:', recipes.length)
+
   // 2. ป้องกันกรณี userIngredients ส่งมาไม่ใช่ Array
   const safeUserIngredients = Array.isArray(userIngredients) ? userIngredients : []
 
@@ -49,6 +52,6 @@ export async function findMatchingRecipes(
   })
 
   return results
-    .filter((recipe: any) => recipe.matchPercent >= 50)
+    .filter((recipe: any) => recipe.matchPercent >= 30)
     .sort((a: any, b: any) => b.matchPercent - a.matchPercent)
 }
