@@ -712,7 +712,7 @@
     },
     {
         "name": "ข้าวไข่ข้น",
-        "image": "/images/ข้าวไข่ข้น.jpg",
+        "image": "/images/ข้าวไข่ข้น.jfif",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal", "high_protein"],
         "ingredients": [
@@ -730,7 +730,7 @@
     },
     {
         "name": "ข้าวไข่ข้นกุ้ง",
-        "image": "/images/ข้าวไข่ข้นกุ้ง.jpg",
+        "image": "/images/ข้าวไข่ข้นกุ้ง.jfif",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal", "high_protein"],
         "ingredients": [
@@ -750,7 +750,7 @@
     },
     {
     "name": "ผัดกะเพราไก่ชิ้น",
-    "image": "/images/ผัดกะเพราไก่ชิ้น.jpg",
+    "image": "/images/ผัดกะเพราไก่ชิ้น.jfif",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "high_protein"],
     "ingredients": [
@@ -771,7 +771,7 @@
   },
   {
     "name": "ข้าวผัดกุ้ง",
-    "image": "/images/ข้าวผัดกุ้ง.jpg",
+    "image": "/images/ข้าวผัดกุ้ง.jfif",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "high_protein"],
     "ingredients": [
@@ -793,7 +793,7 @@
   },
   {
     "name": "ผัดผักบุ้งไฟแดง",
-    "image": "/images/ผัดผักบุ้งไฟแดง.jpg",
+    "image": "/images/ผัดผักบุ้งไฟแดง.jfif",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "healthy"],
     "ingredients": [
@@ -813,7 +813,7 @@
   },
   {
     "name": "ไข่เจียวหอมใหญ่",
-    "image": "/images/ไข่เจียวหอมใหญ่.jpg",
+    "image": "/images/ไข่เจียวหอมใหญ่.jfif",
     "cookingMethod": ["fry"],
     "categories": ["normal"],
     "ingredients": [
@@ -832,7 +832,7 @@
   },
   {
     "name": "แกงจืดหมูชิ้นใส่แครอทและเห็ด",
-    "image": "/images/แกงจืดหมูชิ้นใส่แครอทและเห็ด.jpg",
+    "image": "/images/แกงจืดหมูชิ้นใส่แครอทและเห็ด.jfif",
     "cookingMethod": ["boil"],
     "categories": ["normal", "healthy"],
     "ingredients": [
@@ -851,7 +851,7 @@
   },
   {
     "name": "ข้าวต้มหมูชิ้น",
-    "image": "/images/ข้าวต้มหมูชิ้น.jpg",
+    "image": "/images/ข้าวต้มหมูชิ้น.jfif",
     "cookingMethod": ["boil"],
     "categories": ["normal", "healthy"],
     "ingredients": [
@@ -870,7 +870,7 @@
   },
   {
     "name": "ผัดกะเพรามาม่าไก่ชิ้น",
-    "image": "/images/ผัดกะเพรามาม่าไก่ชิ้น.jpg",
+    "image": "/images/ผัดกะเพรามาม่าไก่ชิ้น.jfif",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "high_protein"],
     "ingredients": [
@@ -891,7 +891,7 @@
   },
   {
     "name": "ไข่ตุ๋นหมูชิ้นไมโครเวฟ",
-    "image": "/images/ไข่ตุ๋นหมูชิ้นไมโครเวฟ.jpg",
+    "image": "/images/ไข่ตุ๋นหมูชิ้นไมโครเวฟ.jfif",
     "cookingMethod": ["microwave"],
     "categories": ["normal", "healthy"],
     "ingredients": [
@@ -901,8 +901,9 @@
       { "name": "รสดี", "amount": 0.5, "unit": "ช้อนชา", "required": true }
     ],
     "steps": [
+      "หั่นเนื้อหมูชิ้นเล็ก ๆ ในชามทนความร้อน นำเข้าไมโครเวฟประมาณ 1-2 นาทีจนหมูสุก",
       "ตอกไข่ใส่ชามทนความร้อน เติมน้ำเปล่า 1 ถ้วย ปรุงรสด้วยเกลือและรสดี ตีให้เข้ากัน",
-      "ใส่เนื้อหมูหั่นชิ้นเล็กๆ ลงไป",
+      "ใส่เนื้อหมูที่เตรียมไว้ลงไป",
       "นำเข้าไมโครเวฟไฟปานกลางประมาณ 5 นาทีจนไข่สุกเนียน"
     ],
     "caloriesTotal": 210
