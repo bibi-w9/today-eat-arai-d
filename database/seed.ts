@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { Recipe } from './models/Recipe'
+import { Recipe } from '../server/models/Recipe'
 import recipesData from './seed-data/recipes.json'
 import 'dotenv/config'
 

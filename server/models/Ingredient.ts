@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model, models } from 'mongoose'
 
 const IngredientSchema = new Schema({
   name: { type: String, required: true, unique: true },
@@ -9,4 +9,4 @@ const IngredientSchema = new Schema({
   carbs: Number
 })
 
-export const Ingredient = model('Ingredient', IngredientSchema)
+export const Ingredient = models.Ingredient || model('Ingredient', IngredientSchema)
