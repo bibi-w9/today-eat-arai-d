@@ -41,6 +41,7 @@ export async function findMatchingRecipes(
     return {
       _id: recipe._id,
       name: recipe.name,
+      image: recipe.image,
       cookingMethod: recipe.cookingMethod,
       categories: recipe.categories,
       steps: recipe.steps,

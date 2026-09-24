@@ -41,6 +41,7 @@
   },
   {
     "name": "ข้าวผัดหมู",
+    "image": "/images/ข้าวผัดหมู.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal"],
     "ingredients": [
@@ -66,6 +67,7 @@
   },
   {
     "name": "ไข่เจียวหมูสับหอมใหญ่",
+    "image": "/images/ไข่เจียวหมูสับหอมใหญ่.jpg",
     "cookingMethod": ["fry"],
     "categories": ["normal"],
     "ingredients": [
@@ -89,6 +91,7 @@
   },
   {
     "name": "ต้มยำกุ้งน้ำใส",
+    "image": "/images/ต้มยำกุ้งน้ำใส.jpg",
     "cookingMethod": ["boil"],
     "categories": ["normal","healthy"],
     "ingredients": [
@@ -114,6 +117,7 @@
   },
   {
     "name": "บะหมี่กึ่งสำเร็จรูปไข่และกุ้ง",
+    "image": "/images/บะหมี่กึ่งสำเร็จรูปไข่และกุ้ง.jpg",
     "cookingMethod": ["microwave"],
     "categories": ["normal"],
     "ingredients": [
@@ -132,6 +136,7 @@
   },
   {
     "name": "แกงจืดไข่น้ำหมูสับผักบุ้ง",
+    "image": "/images/แกงจืดไข่น้ำหมูสับผักบุ้ง.jpg",
     "cookingMethod": ["boil","fry"],
     "categories": ["normal"],
     "ingredients": [
@@ -155,6 +160,7 @@
   },
   {
     "name": "สเต็กอกไก่ย่างเกลือ",
+    "image": "/images/สเต็กอกไก่ย่างเกลือ.jpg",
     "cookingMethod": ["fry"],
     "categories": ["normal","high_protein","healthy"],
     "ingredients": [
@@ -173,6 +179,7 @@
   },
   {
     "name": "กะเพรากุ้ง",
+    "image": "/images/กะเพรากุ้ง.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal","high_protein"],
     "ingredients": [
@@ -196,6 +203,7 @@
   },
   {
     "name": "อกไก่นึ่งมะนาว",
+    "image": "/images/อกไก่นึ่งมะนาว.jpg",
     "cookingMethod": ["steamed"],
     "categories": ["normal","high_protein","healthy"],
     "ingredients": [
@@ -215,6 +223,7 @@
   },
   {
     "name": "ซุปไก่ใส่ไข่",
+    "image": "/images/ซุปไก่ใส่ไข่.jpg",
     "cookingMethod": ["boil"],
     "categories": ["normal", "high_protein", "healthy"],
     "ingredients": [
@@ -235,6 +244,7 @@
   },
   {
     "name": "ไข่ตุ๋นกุ้งสับอกไก่",
+    "image": "/images/ไข่ตุ๋นกุ้งสับอกไก่.jpg",
     "cookingMethod": ["microwave"],
     "categories": ["normal", "high_protein", "healthy"],
     "ingredients": [
@@ -257,6 +267,7 @@
   },
   {
     "name": "ข้าวผัดไก่(ผัดน้ำ)",
+    "image": "/images/ข้าวผัดไก่(ผัดน้ำ).jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "high_protein", "healthy"],
     "ingredients": [
@@ -280,6 +291,7 @@
   },
   {
     "name": "เห็ดออริจิและแครอทนึ่งจิ้มแจ่ว",
+    "image": "/images/เห็ดออริจิและแครอทนึ่งจิ้มแจ่ว.jpg",
     "cookingMethod": ["steamed"],
     "categories": ["normal","healthy"],
     "ingredients": [
@@ -301,6 +313,7 @@
   },
   {
     "name": "กุ้งย่างเกลือเคียงมะเขือเทศ",
+    "image": "/images/กุ้งย่างเกลือเคียงมะเขือเทศ.jpg",
     "cookingMethod": ["fry"],
     "categories": ["healthy", "normal"],
     "ingredients": [
@@ -319,6 +332,7 @@
   },
   {
     "name": "อกไก่อบสมุนไพร",
+    "image": "/images/อกไก่อบสมุนไพร.jpg",
     "cookingMethod": ["microwave"],
     "categories": ["healthy", "normal"],
     "ingredients": [
@@ -337,6 +351,7 @@
   },
   {
     "name": "กะเพราเห็ดออริจิ",
+    "image": "/images/กะเพราเห็ดออริจิ.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["vegan", "normal"],
     "ingredients": [
@@ -360,6 +375,7 @@
   },
   {
     "name": "ซุปใสมะเขือเทศแครอทและหอมใหญ่",
+    "image": "/images/ซุปใสมะเขือเทศแครอทและหอมใหญ่.jpg",
     "cookingMethod": ["boil"],
     "categories": ["vegan","normal"],
     "ingredients": [
@@ -382,6 +398,7 @@
   },
   {
     "name": "เห็ดออริจิชุบแป้งทอดกรอบ",
+    "image": "/images/เห็ดออริจิชุบแป้งทอดกรอบ.jpg",
     "cookingMethod": ["fry"],
     "categories": ["vegan","normal"],
     "ingredients": [
@@ -401,6 +418,7 @@
   },
   {
     "name": "เห็ดออริจิย่างซีอิ๊ว",
+    "image": "/images/เห็ดออริจิย่างซีอิ๊ว.jpg",
     "cookingMethod": ["fry"],
     "categories": ["vegan","normal"],
     "ingredients": [
@@ -419,6 +437,7 @@
   },
   {
     "name": "ข้าวไข่ดาว",
+    "image": "/images/ข้าวไข่ดาว.jpg",
     "cookingMethod": ["fry"],
     "categories": ["normal"],
     "ingredients": [
@@ -435,6 +454,7 @@
   },
   {
     "name": "ข้าวไข่ลวก",
+    "image": "/images/ข้าวไข่ลวก.jpg",
     "cookingMethod": ["boil"],
     "categories": ["normal", "high_protein", "healthy"],
     "ingredients": [
@@ -452,6 +472,7 @@
   },
   {
     "name": "ข้าวต้มไข่ลวก",
+    "image": "/images/ข้าวต้มไข่ลวก.jpg",
     "cookingMethod": ["boil"],
     "categories": ["normal", "high_protein", "healthy"],
     "ingredients": [
@@ -470,6 +491,7 @@
   },
   {
     "name": "ข้าวหมูกระเทียม",
+    "image": "/images/ข้าวหมูกระเทียม.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal"],
     "ingredients": [
@@ -488,6 +510,7 @@
   },
   {
     "name": "ข้าวไข่เจียว",
+    "image": "/images/ข้าวไข่เจียว.jpg",
     "cookingMethod": ["fry"],
     "categories": ["normal"],
     "ingredients": [
@@ -505,6 +528,7 @@
   },
   {
     "name": "สุกี้น้ำหมู",
+    "image": "/images/สุกี้น้ำหมู.jpg",
     "cookingMethod": ["boil"],
     "categories": ["normal", "healthy"],
     "ingredients": [
@@ -525,6 +549,7 @@
   },
     {
         "name": "สุกี้น้ำไก่",
+        "image": "/images/สุกี้น้ำไก่.jpg",
         "cookingMethod": ["boil"],
         "categories": ["normal", "healthy"],
         "ingredients": [
@@ -545,6 +570,7 @@
     },
     {
         "name": "สุกี้น้ำกุ้ง",
+        "image": "/images/สุกี้น้ำกุ้ง.jpg",
             "cookingMethod": ["boil"],
             "categories": ["normal", "healthy"],
             "ingredients": [
@@ -565,6 +591,7 @@
     },
     {
         "name": "ผัดพริกแกงไก่",
+        "image": "/images/ผัดพริกแกงไก่.jpg",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal", "high_protein"],
         "ingredients": [
@@ -585,6 +612,7 @@
     {
         
         "name": "ผัดพริกแกงหมู",
+        "image": "/images/ผัดพริกแกงหมู.jpg",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal", "high_protein"],
         "ingredients": [
@@ -605,6 +633,7 @@
     {
         
         "name": "ผัดพริกแกงกุ้ง",
+        "image": "/images/ผัดพริกแกงกุ้ง.jpg",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal", "high_protein"],
         "ingredients": [
@@ -624,6 +653,7 @@
     },
     {
         "name": "ผัดมาม่า",
+        "image": "/images/ผัดมาม่า.jpg",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal"],
         "ingredients": [
@@ -641,6 +671,7 @@
     },
     {
         "name": "ผัดมาม่ากุ้ง",
+        "image": "/images/ผัดมาม่ากุ้ง.jpg",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal", "high_protein"],
         "ingredients": [
@@ -661,6 +692,7 @@
     {
      
         "name": "ผัดมาม่าหมู",
+        "image": "/images/ผัดมาม่าหมู.jpg",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal", "high_protein"],
         "ingredients": [
@@ -680,6 +712,7 @@
     },
     {
         "name": "ข้าวไข่ข้น",
+        "image": "/images/ข้าวไข่ข้น.jpg",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal", "high_protein"],
         "ingredients": [
@@ -697,6 +730,7 @@
     },
     {
         "name": "ข้าวไข่ข้นกุ้ง",
+        "image": "/images/ข้าวไข่ข้นกุ้ง.jpg",
         "cookingMethod": ["stir_fry"],
         "categories": ["normal", "high_protein"],
         "ingredients": [
@@ -716,6 +750,7 @@
     },
     {
     "name": "ผัดกะเพราไก่ชิ้น",
+    "image": "/images/ผัดกะเพราไก่ชิ้น.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "high_protein"],
     "ingredients": [
@@ -736,6 +771,7 @@
   },
   {
     "name": "ข้าวผัดกุ้ง",
+    "image": "/images/ข้าวผัดกุ้ง.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "high_protein"],
     "ingredients": [
@@ -757,6 +793,7 @@
   },
   {
     "name": "ผัดผักบุ้งไฟแดง",
+    "image": "/images/ผัดผักบุ้งไฟแดง.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "healthy"],
     "ingredients": [
@@ -776,6 +813,7 @@
   },
   {
     "name": "ไข่เจียวหอมใหญ่",
+    "image": "/images/ไข่เจียวหอมใหญ่.jpg",
     "cookingMethod": ["fry"],
     "categories": ["normal"],
     "ingredients": [
@@ -794,6 +832,7 @@
   },
   {
     "name": "แกงจืดหมูชิ้นใส่แครอทและเห็ด",
+    "image": "/images/แกงจืดหมูชิ้นใส่แครอทและเห็ด.jpg",
     "cookingMethod": ["boil"],
     "categories": ["normal", "healthy"],
     "ingredients": [
@@ -812,6 +851,7 @@
   },
   {
     "name": "ข้าวต้มหมูชิ้น",
+    "image": "/images/ข้าวต้มหมูชิ้น.jpg",
     "cookingMethod": ["boil"],
     "categories": ["normal", "healthy"],
     "ingredients": [
@@ -830,6 +870,7 @@
   },
   {
     "name": "ผัดกะเพรามาม่าไก่ชิ้น",
+    "image": "/images/ผัดกะเพรามาม่าไก่ชิ้น.jpg",
     "cookingMethod": ["stir_fry"],
     "categories": ["normal", "high_protein"],
     "ingredients": [
@@ -850,6 +891,7 @@
   },
   {
     "name": "ไข่ตุ๋นหมูชิ้นไมโครเวฟ",
+    "image": "/images/ไข่ตุ๋นหมูชิ้นไมโครเวฟ.jpg",
     "cookingMethod": ["microwave"],
     "categories": ["normal", "healthy"],
     "ingredients": [

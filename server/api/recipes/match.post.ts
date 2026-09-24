@@ -1,7 +1,7 @@
 import { findMatchingRecipes } from '~~/server/services/recipeService'
 
 const ALLOWED_CATEGORIES = ['healthy', 'normal', 'high protein', 'vegan']
-const ALLOWED_METHODS = ['fry', 'stir-fry', 'boil', 'bake', 'steam']
+const ALLOWED_METHODS = ['fry', 'stir_fry', 'boil', 'bake', 'steam']
 
 // TODO: ต่อ Roboflow/YOLO ตรงนี้ รับ Buffer ของรูป คืน string[] ชื่อวัตถุดิบ
 async function detectIngredients(_image: Buffer): Promise<string[]> {
