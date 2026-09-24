@@ -1,5 +1,4 @@
-import { Recipe } from '~~/database/models/Recipe'
-import { connectDB } from '~~/database/connection'
+import { Recipe } from '../models/Recipe'
 
 export async function findMatchingRecipes(userIngredients: string[], category?: string) {
   await connectDB()
