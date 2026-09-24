@@ -136,8 +136,7 @@ const currentRecipeState = useState('currentRecipe', () => null)
 // ชื่อต้องตรงกับ ingredients[].name ในคอลเลกชัน recipes ทุกตัว
 // (recipeService เทียบชื่อแบบ exact match) ใส่ให้ครอบคลุมเพื่อให้เห็นผลการกรองชัด
 const MOCK_INGREDIENTS = [
-  'ไข่ไก่', 'อกไก่', 'ข้าวกล้อง', 'หมูสับ', 'แครอท',
-  'ต้นหอม', 'กะหล่ำปลี', 'เต้าหู้', 'กระเทียม', 'พริก'
+  'ไข่', 'ข้าว', 'หมู'
 ]
 // const response = await $fetch('/api/recipes/match', {
 //   method: 'POST',

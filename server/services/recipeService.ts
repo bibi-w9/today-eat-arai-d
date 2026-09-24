@@ -1,12 +1,18 @@
 import { Recipe } from '../models/Recipe' 
 
-export async function findMatchingRecipes(userIngredients: string[] = [], category?: string) {
-  // 1. สั่งเชื่อมต่อ DB เสมอก่อน Query (ใช้ Auto-import จาก server/utils)
+export async function findMatchingRecipes(
+  userIngredients: string[] = [],
+  category?: string,
+  method?: string
+) {
   await connectDB()
 
   const query: any = {}
   if (category) {
     query.categories = category
+  }
+  if (method) {
+    query.cookingMethod = method
   }
 
   const recipes = await Recipe.find(query).lean()

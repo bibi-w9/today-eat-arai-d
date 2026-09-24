@@ -1,16 +1,51 @@
 import { findMatchingRecipes } from '~~/server/services/recipeService'
 
-export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  const { ingredients, category } = body
+const ALLOWED_CATEGORIES = ['healthy', 'normal', 'high protein', 'vegan']
+const ALLOWED_METHODS = ['fry', 'stir-fry', 'boil', 'bake', 'steam']
 
-  if (!ingredients || !Array.isArray(ingredients)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ต้องส่ง ingredients เป็น array'
-    })
+// TODO: ต่อ Roboflow/YOLO ตรงนี้ รับ Buffer ของรูป คืน string[] ชื่อวัตถุดิบ
+async function detectIngredients(_image: Buffer): Promise<string[]> {
+  throw createError({ statusCode: 501, statusMessage: 'ยังไม่ได้ต่อ object detection' })
+}
+
+export default defineEventHandler(async (event) => {
+  const contentType = getHeader(event, 'content-type') || ''
+  let category = ''
+  let method = ''
+  let ingredients: string[] = []
+
+  if (contentType.includes('multipart/form-data')) {
+    // ----- โหมดจริง: รูป -> YOLO -----
+    const parts = (await readMultipartFormData(event)) || []
+    const field = (name: string) =>
+      parts.find(p => p.name === name && !p.filename)?.data.toString('utf-8') || ''
+
+    category = field('category')
+    method = field('method')
+
+    const image = parts.find(p => p.name === 'image')
+    if (!image) {
+      throw createError({ statusCode: 400, statusMessage: 'ไม่พบไฟล์รูปภาพ' })
+    }
+    ingredients = await detectIngredients(image.data)
+  } else {
+    // ----- โหมด mock: รับ ingredients จาก client ตรงๆ (เปิดเฉพาะตอน dev) -----
+    if (!import.meta.dev) {
+      throw createError({ statusCode: 403, statusMessage: 'ต้องส่งรูปภาพ' })
+    }
+    const body = (await readBody(event)) || {}
+    category = body.category || ''
+    method = body.method || ''
+    ingredients = Array.isArray(body.ingredients) ? body.ingredients : []
   }
 
-  const recipes = await findMatchingRecipes(ingredients, category)
-  return recipes
+  if (category && !ALLOWED_CATEGORIES.includes(category)) {
+    throw createError({ statusCode: 400, statusMessage: 'category ไม่ถูกต้อง' })
+  }
+  if (method && !ALLOWED_METHODS.includes(method)) {
+    throw createError({ statusCode: 400, statusMessage: 'method ไม่ถูกต้อง' })
+  }
+
+  const data = await findMatchingRecipes(ingredients, category || undefined, method || undefined)
+  return { success: true, data }
 })
