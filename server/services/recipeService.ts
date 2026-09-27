@@ -8,12 +8,8 @@ export async function findMatchingRecipes(
   await connectDB()
 
   const query: any = {}
-  if (category) {
-    query.categories = category
-  }
-  if (method) {
-    query.cookingMethod = method
-  }
+  if (category) query.categories = category === 'high protein' ? 'high_protein' : category
+  if (method) query.cookingMethod = method
 
   const recipes = await Recipe.find(query).lean()
 
@@ -21,7 +17,8 @@ export async function findMatchingRecipes(
   console.log('Recipes Found in DB:', recipes.length)
 
   // 2. ป้องกันกรณี userIngredients ส่งมาไม่ใช่ Array
-  const safeUserIngredients = Array.isArray(userIngredients) ? userIngredients : []
+  const aliases: Record<string, string[]> = { 'หมู': ['หมู', 'หมูสับ', 'หมูชิ้น'], 'ไก่': ['ไก่', 'อกไก่'], 'เห็ดออริจิ': ['เห็ดออริจิ', 'เห็ด'] }
+  const safeUserIngredients = (Array.isArray(userIngredients) ? userIngredients : []).flatMap(name => aliases[name] || [name])
 
   const results = recipes.map((recipe: any) => {
     // 3. ป้องกันกรณีเมนูใน DB ไม่มี ingredients หรือเป็น null

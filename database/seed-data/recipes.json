@@ -907,7 +907,25 @@
       "นำเข้าไมโครเวฟไฟปานกลางประมาณ 5 นาทีจนไข่สุกเนียน"
     ],
     "caloriesTotal": 210
+  },
+  {
+    "name": "ผัดมาม่าใส่ไข่",
+    "image": "/images/ผัดมาม่าใส่ไข่.jfif",
+    "cookingMethod": ["stir_fry"],
+    "categories": ["normal"],
+    "ingredients": [
+      { "name": "มาม่า", "amount": 1, "unit": "ห่อ", "required": true },
+      { "name": "ไข่", "amount": 1, "unit": "ฟอง", "required": true },
+      { "name": "น้ำมันพืช", "amount": 15, "unit": "ml", "required": true },
+      { "name": "ผักกาดขาว", "amount": 10, "unit": "g", "required": false }
+    ],
+    "steps": [
+      "ตั้งกระทะใส่น้ำมัน รอให้ร้อน",
+      "ตอกไข่ลงไปผัดจนเริ่มสุกพอแตก",
+      "ใส่มาม่าลงไปผัดให้เข้ากัน",
+      "ใส่ผักกาดขาวลงไปผัดอีก 2-3 นาที แล้วนำใส่จานพร้อมเสิร์ฟ"
+    ],
+    "caloriesTotal": 190
   }
-
 
 ]

@@ -17,7 +17,7 @@
 
       <div class="text-center mb-8 mt-4">
         <h2 class="text-3xl font-extrabold text-gray-800 tracking-tight">เลือกสไตล์<span class="text-pink-500">อาหาร</span>ที่ใช่! 😋</h2>
-        <p class="text-gray-500 mt-2 font-medium text-sm bg-pink-100 inline-block px-4 py-1 rounded-full text-pink-600">สเต็ป 1 / 3</p>
+        <p class="text-gray-500 mt-2 font-medium text-sm bg-pink-100 inline-block px-4 py-1 rounded-full text-pink-600">สเต็ป 1 / 4</p>
       </div>
 
       <!-- หมวดหมู่อาหาร (ทำเป็นปุ่มการ์ดใหญ่ๆ ให้น่ากด) -->

@@ -17,7 +17,7 @@
 
       <div class="text-center mb-8 mt-4">
         <h2 class="text-3xl font-extrabold text-gray-800 tracking-tight">อยากให้<span class="text-pink-500">ทำอาหาร</span>แบบไหน? 🧑‍🍳</h2>
-        <p class="text-gray-500 mt-2 font-medium text-sm bg-pink-100 inline-block px-4 py-1 rounded-full text-pink-600">สเต็ป 2 / 3</p>
+        <p class="text-gray-500 mt-2 font-medium text-sm bg-pink-100 inline-block px-4 py-1 rounded-full text-pink-600">สเต็ป 2 / 4</p>
       </div>
 
       <!-- วิธีการทำอาหาร (วนลูปจาก filteredMethods แทน methods เดิม) -->
@@ -36,11 +36,11 @@
       <!-- ปุ่มถัดไป -->
       <button 
         @click="goToNextStep"
-        :disabled="!selectedMethod|| isSaving"
+        :disabled="!selectedMethod"
         class="group w-full inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         :class="selectedMethod ? 'bg-pink-400 text-white shadow-[0_6px_0_0_#be185d] hover:bg-pink-500 hover:shadow-[0_2px_0_0_#be185d] hover:translate-y-[4px] active:scale-95' : 'bg-gray-200 text-gray-400 shadow-[0_6px_0_0_#d1d5db]'"
       >
-         {{ isSaving ? 'กำลังบันทึก...' : 'ต่อไป (แอบดูตู้เย็น) 👀' }}
+         ต่อไป (อัปโหลดรูปวัตถุดิบ) 👀
         <span class="group-hover:translate-x-2 transition-transform duration-300 ease-in-out ml-2">➭</span>
       </button>
 
@@ -56,7 +56,6 @@ const router = useRouter()
 const route = useRoute() 
 
 const selectedMethod = ref('')
-const isSaving = ref(false)
 
 // ข้อมูลวิธีการทำอาหารทั้งหมด (เก็บไว้เป็นฐานข้อมูลหลัก)
 const allMethods = [
@@ -81,10 +80,8 @@ const filteredMethods = computed(() => {
   return allMethods
 })
 
-const matchedRecipesState = useState('matchedRecipes', () => [])
-
-const goToNextStep = async () => {
-  if (!selectedMethod.value || isSaving.value) return
+const goToNextStep = () => {
+  if (!selectedMethod.value) return
 
   const category = route.query.category
   // กันคนเข้าหน้านี้ตรงๆ โดยไม่ผ่านหน้าเลือกหมวดหมู่
@@ -93,30 +90,6 @@ const goToNextStep = async () => {
     return
   }
 
-  isSaving.value = true
-  try {
-    const mockIngredients = ['ไข่', 'ข้าว', 'หมู']
-// 2. ข้ามการบันทึก Selection ไปเรียก API จับคู่เมนูโดยตรง
-    const response = await $fetch('/api/recipes/match', {
-      method: 'POST',
-      body: { 
-        category: category, 
-        method: selectedMethod.value,
-        ingredients: mockIngredients
-      }
-    })
-
-    if (response?.success && response.data.length > 0) {
-  matchedRecipesState.value = response.data // บันทึกข้อมูลทั้ง 5 เมนู
-  router.push('/result')
-    } else {
-      alert('ไม่พบเมนูที่ตรงกับวัตถุดิบในฐานข้อมูล 🥺')
-    }
-  } catch (error) {
-    console.error('บันทึกตัวเลือกไม่สำเร็จ:', error)
-    alert('บันทึกตัวเลือกไม่สำเร็จ ลองอีกครั้งนะ 🥺')
-  } finally {
-    isSaving.value = false
-  }
+  router.push({ path: '/upload', query: { category, method: selectedMethod.value } })
 }
 </script>

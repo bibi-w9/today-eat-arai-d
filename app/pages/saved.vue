@@ -68,7 +68,7 @@
       <div v-else class="flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl rounded-[3rem] p-10 md:p-16 shadow-sm border-2 border-white max-w-2xl mx-auto mt-10 text-center">
         <div class="text-7xl mb-6 animate-[bounce_2s_infinite]">🥺</div>
         <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-4">สมุดจดยังว่างเปล่าเลย!</h2>
-        <p class="text-gray-500 font-medium mb-8 text-lg">คุณยังไม่ได้บันทึกเมนูไหนไว้เลย ลองให้ AI ช่วยคิดเมนูอร่อยๆ จากของในตู้เย็นดูไหม?</p>
+        <p class="text-gray-500 font-medium mb-8 text-lg">คุณยังไม่ได้บันทึกเมนูไหนไว้เลย ลองค้นหาเมนูอร่อยๆ จากของในตู้เย็นดูไหม?</p>
         <button @click="router.push('/upload')" class="group inline-flex items-center justify-center font-bold text-xl py-4 px-10 rounded-[1.5rem] transition-all duration-200 bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
           <span class="mr-2 group-hover:scale-125 transition-transform duration-300">✨</span> ไปเสกเมนูกันเลย!
         </button>

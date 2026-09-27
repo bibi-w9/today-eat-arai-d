@@ -1,5 +1,6 @@
 # ---- Base ----
-FROM node:22-alpine AS base
+# onnxruntime-node มี native binary สำหรับ glibc จึงใช้ Debian slim แทน Alpine
+FROM node:22-bookworm-slim AS base
 WORKDIR /app
 # ปิด telemetry ของ nuxt ตอน build
 ENV NUXT_TELEMETRY_DISABLED=1
@@ -20,6 +21,8 @@ FROM base AS production
 ENV NODE_ENV=production
 # Nuxt build output แบบ standalone อยู่ที่ .output
 COPY --from=build /app/.output ./.output
+# โมเดลต้องอยู่ข้างไฟล์เซิร์ฟเวอร์ใน runtime เพื่อให้ endpoint /api/detect ใช้งานได้
+COPY --from=build /app/server/models/assets/ingredient-detector.onnx ./server/models/assets/ingredient-detector.onnx
 
 EXPOSE 3000
 ENV PORT=3000
