@@ -78,7 +78,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 mb-12">
           <!-- คอลัมน์ซ้าย: วัตถุดิบ -->
-          <div class="h-fit bg-pink-50 p-6 md:p-8 rounded-[2rem] border-2 border-pink-100 shadow-sm">
+          <div class="h-fit bg-pink-50 p-6 md:p-8 rounded-[2rem] border-2 border-pink-100 shadow-sm flex flex-col">
             <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
               <span class="text-3xl">🛒</span> สิ่งที่คุณมี
             </h3>
@@ -91,12 +91,20 @@
             <h3 class="text-xl font-bold text-gray-700 mb-4 flex items-center gap-2">
               <span class="text-2xl">🏃</span> สิ่งที่ต้องซื้อเพิ่ม
             </h3>
-            <ul class="space-y-3">
+            <ul class="space-y-3 mb-6">
               <li v-if="!selectedRecipe.missing || selectedRecipe.missing.length === 0" class="text-gray-500 italic">มีครบทุกอย่างแล้ว เย้!</li>
               <li v-for="(item, index) in selectedRecipe.missing" :key="'miss-'+index" class="flex justify-between items-center text-red-500 font-medium border-b border-pink-100/50 pb-2">
                 <span class="flex items-center gap-2"><span class="text-xl">❌</span> {{ item }}</span>
               </li>
             </ul>
+            
+            <!-- ปุ่มสั่งซื้อ (Monetization Feature) แสดงเฉพาะเมื่อมีของขาด -->
+            <div v-if="selectedRecipe.missing && selectedRecipe.missing.length > 0" class="mt-auto">
+              <button @click="openDeliveryApp" class="w-full group/btn inline-flex items-center justify-center gap-2 font-extrabold text-white bg-green-500 px-5 py-3.5 rounded-2xl shadow-[0_4px_0_0_#15803d] hover:bg-green-600 hover:shadow-[0_2px_0_0_#15803d] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all">
+                <span class="text-xl">🛵</span> เปิดแอป Delivery เพื่อสั่งของที่ขาด
+              </button>
+              <p class="text-[10px] text-gray-400 text-center mt-2 font-medium">* ได้รับส่วนแบ่ง Affiliate Commission เมื่อสั่งซื้อสำเร็จ</p>
+            </div>
           </div>
 
           <!-- คอลัมน์ขวา: วิธีทำ -->
@@ -137,14 +145,13 @@ const router = useRouter()
 // 1. ดึงข้อมูล Array ของเมนูทั้งหมดมา
 const matchedRecipesState = useState('matchedRecipes')
 
-// ถ้าเปิดมาหน้านี้โดยตรง ไม่มีข้อมูลสูตร ให้เด้งกลับไปหน้าแรก
 if (!matchedRecipesState.value || matchedRecipesState.value.length === 0) {
   router.push('/')
 }
 
 const matchedRecipes = computed(() => matchedRecipesState.value || [])
 
-// 2. State สำหรับเก็บเมนูที่ผู้ใช้คลิกเลือก (ถ้าเป็น null จะแสดงหน้ารายการ)
+// 2. State สำหรับเก็บเมนูที่ผู้ใช้คลิกเลือก
 const selectedRecipe = ref(null)
 
 // 3. ฟังก์ชันบันทึกสูตรอาหารลง DB
@@ -168,6 +175,21 @@ const saveRecipe = async () => {
     console.error('API Error:', error)
     alert('บันทึกไม่ได้ เกิดข้อผิดพลาด 🥺')
   }
+}
+
+// 4. ฟังก์ชันลิงก์ไปแอปจริง (Universal Link ไปยัง GrabMart)
+const openDeliveryApp = () => {
+  if (!selectedRecipe.value || !selectedRecipe.value.missing) return
+  
+  // URL ไปยังเว็บ GrabMart (ระบบมือถือจะ Detect ว่าผู้ใช้มีแอป Grab ไหม ถ้ามีมันจะเด้งสลับไปเปิดแอปเองโดยอัตโนมัติ)
+  // อนาคตสามารถใส่ ?aff_id=XXXX ของเราต่อท้ายลิงก์ได้เลยเพื่อเก็บค่า Affiliate
+  //const deliveryUrl = 'https://food.grab.com/th/th/mart'
+  
+  // แสดง Alert แจ้งเตือนเพื่อให้คนฟัง Pitch เข้าใจว่ากำลังส่งเข้ากระบวนการเก็บเงิน Affiliate
+  alert(`🚀 กำลังนำคุณไปยังแอป Delivery...\n(ในระบบจริงจะนำผู้ใช้เข้าแอป Delivery พร้อมแนบ Affiliate Tracking ID เพื่อรับค่าคอมมิชชัน)`)
+  
+  // เปิดแท็บใหม่พาผู้ใช้ไปที่แพลตฟอร์มปลายทาง
+  //window.open(deliveryUrl, '_blank')
 }
 </script>
 

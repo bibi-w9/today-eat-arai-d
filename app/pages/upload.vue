@@ -1,340 +1,164 @@
 <template>
-  <div class="relative min-h-screen bg-pink-50 flex items-center justify-center p-6 overflow-hidden">
-    <main class="relative z-10 w-full max-w-2xl bg-white/90 rounded-[2.5rem] p-7 md:p-10 shadow-sm border-2 border-white">
-      
-      <!-- ปุ่มกลับ -->
-      <button 
-        @click="router.back()" 
-        class="absolute top-6 left-6 text-gray-400 hover:text-pink-500 text-sm font-bold"
-      >
-        ◂ กลับ
-      </button>
-      
-      <!-- Header -->
-      <header class="text-center mb-7 mt-4">
-        <h1 class="text-3xl font-extrabold text-gray-800">
-          ตรวจ<span class="text-pink-500">วัตถุดิบ</span>จากรูป 📸
-        </h1>
-        <p class="text-gray-500 mt-2 font-medium text-sm bg-pink-100 inline-block px-4 py-1 rounded-full text-pink-600">
-          สเต็ป 3 / 4
-        </p>
-        <p class="text-sm text-gray-500 mt-3">
-          ถ่ายรูปหรืออัปโหลดรูป แล้วให้โมเดลช่วยระบุวัตถุดิบ
-        </p>
+  <div class="relative flex min-h-screen items-center justify-center bg-pink-50 p-4 sm:p-6">
+    <main class="relative z-10 w-full max-w-2xl rounded-[2.5rem] border-2 border-white bg-white/90 p-6 shadow-sm sm:p-7 md:p-10">
+      <button @click="router.back()" class="absolute left-6 top-6 text-sm font-bold text-gray-400 hover:text-pink-500">◂ กลับ</button>
+
+      <header class="mb-6 mt-4 text-center">
+        <h1 class="text-2xl font-extrabold text-gray-800 sm:text-3xl">ตรวจ<span class="text-pink-500">วัตถุดิบ</span>จากรูป 📸</h1>
+        <p class="mt-2 inline-block rounded-full bg-pink-100 px-4 py-1 text-sm font-medium text-pink-600">สเต็ป 3 / 4</p>
+        <p class="mt-3 text-sm text-gray-500">ถ่ายรูปหรืออัปโหลดหลายรูป แล้วให้โมเดลช่วยระบุวัตถุดิบ</p>
       </header>
 
-      <!-- ส่วนแสดงรูปภาพและกล้อง -->
-      <section class="mb-6">
-        <div 
-          class="relative flex items-center justify-center min-h-64 w-full border-4 rounded-[2rem] overflow-hidden bg-pink-50" 
-          :class="imagePreview || isCameraOpen ? 'border-pink-300 border-solid' : 'border-pink-200 border-dashed bg-white'"
-        >
-          <!-- กรณีเปิดกล้อง -->
+      <section class="mb-5">
+        <div class="relative flex min-h-64 w-full items-center justify-center overflow-hidden rounded-[2rem] border-4 bg-pink-50" :class="selectedImage || isCameraOpen ? 'border-pink-300 border-solid' : 'border-pink-200 border-dashed bg-white'">
           <template v-if="isCameraOpen">
-            <video 
-              ref="videoRef" 
-              autoplay 
-              playsinline 
-              class="absolute inset-0 w-full h-full object-cover" 
-            />
-            <div class="absolute bottom-3 flex gap-3 z-10">
-              <button 
-                @click="stopCamera" 
-                class="bg-white/90 text-gray-500 w-10 h-10 rounded-full font-bold shadow-lg"
-              >
-                ✕
-              </button>
-              <button 
-                @click="capturePhoto" 
-                class="bg-pink-500 text-white px-6 py-2 rounded-full font-bold shadow-lg"
-              >
-                📸 ถ่ายภาพ
-              </button>
-            </div>
-          </template>
-          
-          <!-- กรณีมีรูป Preview -->
-          <template v-else-if="imagePreview">
-            <div class="relative max-w-full max-h-[26rem]" :style="previewStyle">
-              <img 
-                ref="imageRef" 
-                :src="imagePreview" 
-                class="absolute inset-0 w-full h-full" 
-                alt="รูปวัตถุดิบ" 
-                @load="setImageSize" 
-              />
-              
-              <!-- กล่อง Bounding Box ตรวจจับวัตถุดิบ -->
-              <div 
-                v-for="(detection, index) in detections" 
-                :key="`${detection.label}-${index}`" 
-                class="absolute border-[3px] border-pink-500 rounded-md" 
-                :style="boxStyle(detection)"
-              >
-                <span class="absolute -top-7 left-0 whitespace-nowrap rounded-md bg-pink-500 px-2 py-1 text-xs font-bold text-white shadow">
-                  {{ detection.label }} {{ detection.confidence.toFixed(1) }}%
-                </span>
+            <div class="relative w-full max-h-[26rem] aspect-[4/3] overflow-hidden bg-black">
+              <video ref="videoRef" autoplay playsinline class="absolute inset-0 h-full w-full object-cover" />
+              <div class="absolute inset-x-0 bottom-3 z-10 flex justify-center gap-3">
+                <button @click="stopCamera" class="h-10 w-10 rounded-full bg-white/90 font-bold text-gray-500 shadow-lg" aria-label="ปิดกล้อง">✕</button>
+                <button @click="capturePhoto" class="rounded-full bg-pink-500 px-5 py-2 font-bold text-white shadow-lg sm:px-6">📸 ถ่ายภาพ</button>
               </div>
             </div>
-            
-            <div class="absolute right-3 top-3 flex gap-2 z-20">
-              <button 
-                @click="startCamera" 
-                class="bg-white text-pink-600 font-bold px-3 py-2 rounded-xl text-sm shadow"
-              >
-                📸 ถ่ายใหม่
-              </button>
-              <label class="bg-white text-blue-500 font-bold px-3 py-2 rounded-xl text-sm shadow cursor-pointer">
-                🖼️ เปลี่ยนรูป
-                <input type="file" accept="image/*" class="hidden" @change="handleFileChange" />
-              </label>
+          </template>
+
+          <template v-else-if="selectedImage">
+            <div class="relative max-w-full" :style="previewStyle">
+              <img ref="imageRef" :src="selectedImage.preview" class="absolute inset-0 h-full w-full object-contain" alt="รูปวัตถุดิบ" @load="setImageSize" />
+              <div v-for="(detection, index) in selectedImage.detections" :key="`${detection.label}-${index}`" class="absolute rounded-md border-[3px] border-pink-500" :style="boxStyle(detection)">
+                <span class="absolute -top-7 left-0 whitespace-nowrap rounded-md bg-pink-500 px-2 py-1 text-xs font-bold text-white shadow">{{ detection.label }} {{ detection.confidence.toFixed(1) }}%</span>
+              </div>
+            </div>
+            <div class="absolute right-3 top-3 z-20 flex gap-2">
+              <button @click="startCamera" class="rounded-xl bg-white px-3 py-2 text-xs font-bold text-pink-600 shadow sm:text-sm">📸 ถ่ายเพิ่ม</button>
+              <label class="cursor-pointer rounded-xl bg-white px-3 py-2 text-xs font-bold text-blue-500 shadow sm:text-sm">🖼️ เพิ่มรูป<input type="file" accept="image/*" multiple class="hidden" @change="handleFileChange" /></label>
             </div>
           </template>
-          
-          <!-- กรณีเริ่มต้น (ไม่มีรูป/ไม่ได้เปิดกล้อง) -->
-          <div v-else class="text-center p-6 opacity-70">
-            <span class="text-6xl block mb-3">🧺</span>
-            <p class="text-pink-400 font-bold text-lg">รอรูปวัตถุดิบอยู่นะ</p>
-          </div>
+
+          <div v-else class="p-6 text-center opacity-70"><span class="mb-3 block text-6xl">🧺</span><p class="text-lg font-bold text-pink-400">รอรูปวัตถุดิบอยู่นะ</p></div>
         </div>
-        
         <canvas ref="canvasRef" class="hidden" />
       </section>
 
-      <!-- ปุ่มถ่ายรูป / อัปโหลด (แสดงตอนไม่มีรูป) -->
-      <div v-if="!imagePreview && !isCameraOpen" class="flex gap-4 justify-center mb-6">
-        <button 
-          @click="startCamera" 
-          class="flex-1 bg-pink-500 text-white rounded-[1.5rem] py-4 font-bold shadow-[0_5px_0_0_#9d174d]"
-        >
-          📸 ถ่ายรูป
-        </button>
-        <label class="flex-1 text-center bg-white border-2 border-pink-200 text-pink-500 rounded-[1.5rem] py-4 font-bold cursor-pointer shadow-[0_5px_0_0_#fbcfe8]">
-          🖼️ อัปโหลดรูป
-          <input type="file" accept="image/*" class="hidden" @change="handleFileChange" />
-        </label>
+      <div v-if="images.length" class="mb-6">
+        <div class="mb-2 flex items-center justify-between px-1"><p class="text-sm font-bold text-gray-600">รูปที่เลือก {{ images.length }} รูป</p><button @click="clearImages" class="text-sm font-bold text-pink-500 hover:text-pink-700">ลบทั้งหมด</button></div>
+        <div class="flex gap-3 overflow-x-auto pb-2">
+          <div v-for="(image, index) in images" :key="image.id" class="relative shrink-0">
+            <button @click="selectImage(index)" class="h-20 w-20 overflow-hidden rounded-2xl border-[3px] bg-pink-50" :class="selectedIndex === index ? 'border-pink-500' : 'border-pink-100'"><img :src="image.preview" class="h-full w-full object-cover" :alt="`รูปที่ ${index + 1}`" /></button>
+            <button @click="removeImage(index)" class="absolute -right-1 -top-1 h-6 w-6 rounded-full bg-gray-700 text-xs text-white shadow" :aria-label="`ลบรูปที่ ${index + 1}`">✕</button>
+            <span class="absolute bottom-1 left-1 rounded-full bg-white/90 px-1.5 text-[10px] font-bold text-pink-600">{{ index + 1 }}</span>
+          </div>
+        </div>
       </div>
 
-      <!-- ปุ่มตรวจสอบวัตถุดิบ (AI) -->
-      <button 
-        v-if="imagePreview && !hasDetected" 
-        @click="analyzeImage" 
-        :disabled="isDetecting" 
-        class="w-full font-bold text-xl py-4 px-8 rounded-2xl bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] disabled:opacity-60"
-      >
-        {{ isDetecting ? 'กำลังประมวลผลวัตถุดิบ...' : 'ตรวจสอบวัตถุดิบในรูป ✨' }}
-      </button>
+      <div v-if="!isCameraOpen" class="mb-6 flex justify-center gap-3 sm:gap-4">
+        <button @click="startCamera" class="flex-1 rounded-[1.5rem] bg-pink-500 py-4 font-bold text-white shadow-[0_5px_0_0_#9d174d]">📸 {{ images.length ? 'ถ่ายเพิ่ม' : 'ถ่ายรูป' }}</button>
+        <label class="flex-1 cursor-pointer rounded-[1.5rem] border-2 border-pink-200 bg-white py-4 text-center font-bold text-pink-500 shadow-[0_5px_0_0_#fbcfe8]">🖼️ {{ images.length ? 'เพิ่มรูป' : 'อัปโหลดรูป' }}<input type="file" accept="image/*" multiple class="hidden" @change="handleFileChange" /></label>
+      </div>
 
-      <!-- ส่วนผลลัพธ์จาก AI และปุ่มค้นหาเมนู -->
+      <button v-if="images.length && !hasDetected" @click="analyzeImages" :disabled="isDetecting" class="w-full rounded-2xl bg-pink-500 px-6 py-4 text-lg font-bold text-white shadow-[0_6px_0_0_#9d174d] disabled:opacity-60 sm:text-xl">{{ isDetecting ? `กำลังประมวลผลรูป ${detectingProgress}/${images.length}...` : `ตรวจสอบวัตถุดิบใน ${images.length} รูป ✨` }}</button>
+
       <section v-if="hasDetected" class="mt-6 rounded-3xl border-2 border-pink-100 bg-pink-50 p-5">
-        <h2 class="font-extrabold text-xl text-gray-800">
-          พบวัตถุดิบ {{ detections.length }} รายการ
-        </h2>
-        
-        <p v-if="!detections.length" class="mt-2 text-gray-500">
-          ยังไม่พบวัตถุดิบที่โมเดลรู้จัก ลองใช้รูปที่ชัดและมีแสงเพียงพอ
-        </p>
-        
-        <div v-else class="mt-3 flex flex-wrap gap-2">
-          <span 
-            v-for="(detection, index) in detections" 
-            :key="index" 
-            class="rounded-full bg-white px-3 py-1.5 text-sm font-bold text-pink-600 border border-pink-200"
-          >
-            {{ detection.label }} · {{ detection.confidence.toFixed(1) }}%
-          </span>
-        </div>
-        
-        <button 
-          v-if="detections.length" 
-          @click="findMenus" 
-          :disabled="isMatching" 
-          class="mt-5 w-full font-bold text-xl py-4 px-8 rounded-2xl bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] disabled:opacity-60"
-        >
-          {{ isMatching ? 'กำลังค้นหาเมนู...' : 'ค้นหาเมนูจากวัตถุดิบ 🍽️' }}
-        </button>
+        <h2 class="text-xl font-extrabold text-gray-800">พบวัตถุดิบ {{ allDetections.length }} รายการ จาก {{ images.length }} รูป</h2>
+        <p v-if="!allDetections.length" class="mt-2 text-gray-500">ยังไม่พบวัตถุดิบที่โมเดลรู้จัก ลองใช้รูปที่ชัดและมีแสงเพียงพอ</p>
+        <div v-else class="mt-3 flex flex-wrap gap-2"><span v-for="(detection, index) in allDetections" :key="index" class="rounded-full border border-pink-200 bg-white px-3 py-1.5 text-sm font-bold text-pink-600">{{ detection.label }} · {{ detection.confidence.toFixed(1) }}%</span></div>
+        <button v-if="allDetections.length" @click="findMenus" :disabled="isMatching" class="mt-5 w-full rounded-2xl bg-pink-500 px-6 py-4 text-lg font-bold text-white shadow-[0_6px_0_0_#9d174d] disabled:opacity-60 sm:text-xl">{{ isMatching ? 'กำลังค้นหาเมนู...' : 'ค้นหาเมนูจากวัตถุดิบ 🍽️' }}</button>
       </section>
-      
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-// --- Types ---
-type Detection = { 
-  label: string; 
-  confidence: number; 
-  box: { x: number; y: number; width: number; height: number } 
-}
+type Detection = { label: string; confidence: number; box: { x: number; y: number; width: number; height: number } }
+type ImageItem = { id: string; file: File; preview: string; detections: Detection[] }
 
-// --- Setup Router & Variables ---
 const router = useRouter()
 const route = useRoute()
-
 const selectedCategory = String(route.query.category || '')
 const selectedMethod = String(route.query.method || '')
-
-const imagePreview = ref<string | null>(null)
-const imageFile = ref<File | null>(null)
-
+const images = ref<ImageItem[]>([])
+const selectedIndex = ref(0)
 const imageRef = ref<HTMLImageElement | null>(null)
 const videoRef = ref<HTMLVideoElement | null>(null)
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-
 const imageSize = ref({ width: 1, height: 1 })
 const isCameraOpen = ref(false)
 const isDetecting = ref(false)
+const detectingProgress = ref(0)
 const isMatching = ref(false)
 const hasDetected = ref(false)
-const detections = ref<Detection[]>([])
-
 const matchedRecipesState = useState<any[]>('matchedRecipes', () => [])
 let videoStream: MediaStream | null = null
 
-// --- Computed Styles ---
-const previewStyle = computed(() => ({ 
-  width: '100%', 
-  aspectRatio: `${imageSize.value.width} / ${imageSize.value.height}` 
-}))
-
-const boxStyle = (d: Detection) => ({ 
-  left: `${(d.box.x / imageSize.value.width) * 100}%`, 
-  top: `${(d.box.y / imageSize.value.height) * 100}%`, 
-  width: `${(d.box.width / imageSize.value.width) * 100}%`, 
-  height: `${(d.box.height / imageSize.value.height) * 100}%` 
+const selectedImage = computed(() => images.value[selectedIndex.value] || null)
+const allDetections = computed(() => images.value.flatMap(image => image.detections))
+const previewStyle = computed(() => {
+  const ratio = imageSize.value.width / imageSize.value.height
+  return { width: `min(100%, calc(26rem * ${ratio}))`, aspectRatio: `${imageSize.value.width} / ${imageSize.value.height}` }
 })
+const boxStyle = (d: Detection) => ({ left: `${(d.box.x / imageSize.value.width) * 100}%`, top: `${(d.box.y / imageSize.value.height) * 100}%`, width: `${(d.box.width / imageSize.value.width) * 100}%`, height: `${(d.box.height / imageSize.value.height) * 100}%` })
 
-// --- Methods ---
-const setImageSize = () => { 
-  if (imageRef.value) {
-    imageSize.value = { 
-      width: imageRef.value.naturalWidth, 
-      height: imageRef.value.naturalHeight 
-    } 
-  }
-}
-
-const resetDetection = () => { 
-  hasDetected.value = false
-  detections.value = [] 
-}
-
-const startCamera = async () => { 
+const resetDetection = () => { hasDetected.value = false; images.value.forEach(image => { image.detections = [] }) }
+const setImageSize = () => { if (imageRef.value) imageSize.value = { width: imageRef.value.naturalWidth, height: imageRef.value.naturalHeight } }
+const selectImage = async (index: number) => { selectedIndex.value = index; await nextTick(); setImageSize() }
+const addFiles = (files: File[]) => {
+  const imageFiles = files.filter(file => file.type.startsWith('image/'))
+  if (!imageFiles.length) return
   resetDetection()
-  imagePreview.value = null
-  isCameraOpen.value = true
-  
-  try { 
-    videoStream = await navigator.mediaDevices.getUserMedia({ 
-      video: { facingMode: 'environment' } 
-    })
-    
-    if (videoRef.value) {
-      videoRef.value.srcObject = videoStream 
+  images.value.push(...imageFiles.map(file => ({ id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`, file, preview: URL.createObjectURL(file), detections: [] })))
+  selectedIndex.value = images.value.length - 1
+}
+const removeImage = (index: number) => {
+  const [removed] = images.value.splice(index, 1)
+  if (removed) URL.revokeObjectURL(removed.preview)
+  selectedIndex.value = Math.max(0, Math.min(selectedIndex.value, images.value.length - 1))
+  resetDetection()
+}
+const clearImages = () => { images.value.forEach(image => URL.revokeObjectURL(image.preview)); images.value = []; selectedIndex.value = 0; hasDetected.value = false }
+
+const startCamera = async () => {
+  resetDetection(); isCameraOpen.value = true
+  try {
+    videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, aspectRatio: { ideal: 4 / 3 } } })
+    await nextTick()
+    if (videoRef.value) videoRef.value.srcObject = videoStream
+  } catch { alert('ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้งานกล้อง หรือเลือกอัปโหลดรูปแทน'); isCameraOpen.value = false }
+}
+const stopCamera = () => { videoStream?.getTracks().forEach(track => track.stop()); videoStream = null; isCameraOpen.value = false }
+const capturePhoto = () => {
+  const video = videoRef.value; const canvas = canvasRef.value
+  if (!video || !canvas || !video.videoWidth || !video.videoHeight) return
+  const targetRatio = 4 / 3; const sourceRatio = video.videoWidth / video.videoHeight
+  const sourceWidth = sourceRatio > targetRatio ? video.videoHeight * targetRatio : video.videoWidth
+  const sourceHeight = sourceRatio > targetRatio ? video.videoHeight : video.videoWidth / targetRatio
+  const sourceX = (video.videoWidth - sourceWidth) / 2; const sourceY = (video.videoHeight - sourceHeight) / 2
+  canvas.width = 1600; canvas.height = 1200
+  canvas.getContext('2d')?.drawImage(video, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height)
+  canvas.toBlob(blob => { if (blob) { addFiles([new File([blob], `captured-ingredients-${Date.now()}.jpg`, { type: 'image/jpeg' })]); selectImage(images.value.length - 1) } }, 'image/jpeg', 0.92)
+}
+const handleFileChange = (event: Event) => { const input = event.target as HTMLInputElement; addFiles(Array.from(input.files || [])); input.value = '' }
+const analyzeImages = async () => {
+  if (!images.value.length) return
+  isDetecting.value = true; detectingProgress.value = 0
+  try {
+    for (const [index, image] of images.value.entries()) {
+      detectingProgress.value = index + 1
+      const form = new FormData(); form.append('image', image.file)
+      const response = await $fetch<{ success: boolean; detections: Detection[] }>('/api/detect', { method: 'POST', body: form })
+      image.detections = response.detections
     }
-  } catch { 
-    alert('ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้งานกล้อง หรือเลือกอัปโหลดรูปแทน')
-    isCameraOpen.value = false 
-  } 
+    hasDetected.value = true
+  } catch (error: any) { alert(error?.data?.message || 'ตรวจสอบรูปไม่สำเร็จ ลองอีกครั้งนะ') } finally { isDetecting.value = false }
 }
-
-const stopCamera = () => { 
-  videoStream?.getTracks().forEach(track => track.stop())
-  videoStream = null
-  isCameraOpen.value = false 
-}
-
-const capturePhoto = () => { 
-  if (!videoRef.value || !canvasRef.value) return
-  
-  const video = videoRef.value
-  const canvas = canvasRef.value
-  
-  canvas.width = video.videoWidth
-  canvas.height = video.videoHeight
-  canvas.getContext('2d')?.drawImage(video, 0, 0)
-  
-  canvas.toBlob(blob => { 
-    if (blob) { 
-      imageFile.value = new File([blob], 'captured-ingredients.jpg', { type: 'image/jpeg' })
-      imagePreview.value = URL.createObjectURL(blob)
-      resetDetection() 
-    } 
-  }, 'image/jpeg', 0.9)
-  
-  stopCamera() 
-}
-
-const handleFileChange = (event: Event) => { 
-  const file = (event.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  
-  stopCamera()
-  imageFile.value = file
-  imagePreview.value = URL.createObjectURL(file)
-  resetDetection() 
-}
-
-const analyzeImage = async () => { 
-  if (!imageFile.value) return
-  
-  isDetecting.value = true
-  
-  try { 
-    const form = new FormData()
-    form.append('image', imageFile.value)
-    
-    const response = await $fetch<{ success: boolean; detections: Detection[] }>('/api/detect', { 
-      method: 'POST', 
-      body: form 
-    })
-    
-    detections.value = response.detections
-    hasDetected.value = true 
-  } catch (error: any) { 
-    alert(error?.data?.message || 'ตรวจสอบรูปไม่สำเร็จ ลองอีกครั้งนะ') 
-  } finally { 
-    isDetecting.value = false 
-  } 
-}
-
-const findMenus = async () => { 
+const findMenus = async () => {
   isMatching.value = true
-  
-  try { 
-    // แปลงคำศัพท์ให้ครอบคลุมการค้นหา
-    const mappedIngredients = detections.value.flatMap(item => {
-      if (item.label === 'บะหมี่กึ่งสำเร็จรูป') {
-        return ['บะหมี่กึ่งสำเร็จรูป', 'มาม่า']
-      }
-      return [item.label]
-    })
-
-    const response = await $fetch<{ success: boolean; data: any[] }>('/api/recipes/match', { 
-      method: 'POST', 
-      body: { 
-        category: selectedCategory, 
-        method: selectedMethod, 
-        ingredients: mappedIngredients 
-      } 
-    })
-    
-    if (response.success && response.data.length) { 
-      matchedRecipesState.value = response.data
-      router.push('/result') 
-    } else {
-      alert('ยังไม่พบเมนูที่ตรงกับวัตถุดิบและตัวเลือกนี้ ลองเปลี่ยนวิธีทำหรือถ่ายรูปเพิ่มนะ') 
-    }
-  } catch { 
-    alert('ค้นหาเมนูไม่สำเร็จ ลองอีกครั้งนะ') 
-  } finally { 
-    isMatching.value = false 
-  } 
+  try {
+    const mappedIngredients = [...new Set(allDetections.value.flatMap(item => item.label === 'บะหมี่กึ่งสำเร็จรูป' ? ['บะหมี่กึ่งสำเร็จรูป', 'มาม่า'] : [item.label]))]
+    const response = await $fetch<{ success: boolean; data: any[] }>('/api/recipes/match', { method: 'POST', body: { category: selectedCategory, method: selectedMethod, ingredients: mappedIngredients } })
+    if (response.success && response.data.length) { matchedRecipesState.value = response.data; router.push('/result') } else alert('ยังไม่พบเมนูที่ตรงกับวัตถุดิบและตัวเลือกนี้ ลองเปลี่ยนวิธีทำหรือถ่ายรูปเพิ่มนะ')
+  } catch { alert('ค้นหาเมนูไม่สำเร็จ ลองอีกครั้งนะ') } finally { isMatching.value = false }
 }
-
-// --- Lifecycle Hooks ---
-onBeforeUnmount(stopCamera)
+onBeforeUnmount(() => { stopCamera(); images.value.forEach(image => URL.revokeObjectURL(image.preview)) })
 </script>
