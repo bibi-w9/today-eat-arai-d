@@ -21,17 +21,24 @@
           สมุดจดเมนูแสนอร่อย 📖
         </h1>
         
-        <!-- ปุ่มกลับหน้าหลัก (วางขวาเพื่อ Balance Layout) -->
-        <button @click="router.push('/')" class="group inline-flex items-center justify-center font-bold text-lg py-3 px-6 rounded-2xl transition-all duration-200 text-gray-500 bg-white border-2 border-gray-200 shadow-[0_4px_0_0_#e5e7eb] hover:bg-gray-50 hover:shadow-[0_2px_0_0_#d1d5db] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px]">
-          <span class="mr-1 group-hover:rotate-12 transition-transform">🏠</span> หน้าแรก
-        </button>
+        <div class="flex items-center gap-3">
+          <!-- ปุ่มกลับหน้าหลัก -->
+          <button @click="router.push('/')" class="group inline-flex items-center justify-center font-bold text-lg py-3 px-6 rounded-2xl transition-all duration-200 text-gray-500 bg-white border-2 border-gray-200 shadow-[0_4px_0_0_#e5e7eb] hover:bg-gray-50 hover:shadow-[0_2px_0_0_#d1d5db] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px]">
+            <span class="mr-1 group-hover:rotate-12 transition-transform">🏠</span> หน้าแรก
+          </button>
+
+          <!-- ปุ่มออกจากระบบ -->
+          <button @click="handleSignOut" class="group inline-flex items-center justify-center font-bold text-lg py-3 px-6 rounded-2xl transition-all duration-200 text-red-500 bg-white border-2 border-red-100 shadow-[0_4px_0_0_#fecaca] hover:bg-red-50 hover:shadow-[0_2px_0_0_#fca5a5] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px]">
+            <span class="mr-1 group-hover:translate-x-1 transition-transform">↪</span> ออกจากระบบ
+          </button>
+        </div>
       </div>
 
       <!-- ================= กรณีมีเมนู (Grid Layout) ================= -->
       <div v-if="savedRecipes.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
         
         <!-- การ์ดเมนูแต่ละอัน -->
-        <div v-for="(recipe, index) in savedRecipes" :key="recipe.id || index" class="bg-white/90 backdrop-blur-xl rounded-[2rem] p-5 shadow-sm border-2 border-white hover:shadow-md hover:border-pink-200 transition-all duration-300 relative group flex flex-col">
+        <div v-for="(recipe, index) in savedRecipes" :key="recipe.savedId || index" class="bg-white/90 backdrop-blur-xl rounded-[2rem] p-5 shadow-sm border-2 border-white hover:shadow-md hover:border-pink-200 transition-all duration-300 relative group flex flex-col">
           
           <!-- ปุ่มลบเมนู (ถังขยะ) -->
           <button @click="deleteRecipe(index)" class="absolute top-7 right-7 z-20 w-10 h-10 bg-white/90 backdrop-blur-sm text-red-400 rounded-full flex items-center justify-center text-lg font-bold border-2 border-red-100 shadow-sm opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 transition-all active:scale-90">
@@ -40,19 +47,19 @@
 
           <!-- รูปอาหาร -->
           <div class="w-full aspect-square rounded-2xl overflow-hidden mb-4 relative">
-            <img :src="recipe.image" :alt="recipe.menuName" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
+            <img :src="Array.isArray(recipe.image) ? recipe.image[0] : recipe.image" :alt="recipe.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
             <div class="absolute inset-0 bg-gradient-to-t from-pink-500/20 to-transparent pointer-events-none"></div>
           </div>
 
           <!-- ข้อมูลเมนู -->
-          <h2 class="text-xl font-extrabold text-gray-800 mb-3 line-clamp-1">{{ recipe.menuName }}</h2>
+          <h2 class="text-xl font-extrabold text-gray-800 mb-3 line-clamp-1">{{ recipe.name }}</h2>
           
           <div class="flex flex-wrap gap-2 mb-6">
             <span class="inline-flex items-center gap-1 bg-rose-50 text-rose-500 px-3 py-1.5 rounded-xl font-bold text-xs border border-rose-100">
-              🔥 {{ recipe.calories }} kcal
+              🔥 {{ recipe.caloriesTotal || 0 }} kcal
             </span>
             <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-500 px-3 py-1.5 rounded-xl font-bold text-xs border border-blue-100">
-              ⏱️ {{ recipe.time }} นาที
+              🎯 {{ recipe.matchPercent || 0 }}% ตรงใจ
             </span>
           </div>
 
@@ -79,34 +86,48 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const savedRecipes = ref([])
 
-// เมื่อโหลดหน้าเว็บ ให้ดึงข้อมูลจริงๆ จาก localStorage มาแสดง
-onMounted(() => {
-  const existingSavedItems = localStorage.getItem('savedRecipes')
-  if (existingSavedItems) {
-    savedRecipes.value = JSON.parse(existingSavedItems)
+const { status, signIn, signOut } = useAuth()
+
+const handleSignOut = async () => {
+  await signOut({ callbackUrl: `${window.location.origin}/` })
+}
+
+const loadSavedRecipes = async () => {
+  if (status.value === 'loading') return
+  if (status.value === 'unauthenticated') {
+    await signIn('google', { callbackUrl: `${window.location.origin}/saved` })
+    return
   }
-})
+  try {
+    const response = await $fetch('/api/recipes')
+    savedRecipes.value = response.data || []
+  } catch (error) {
+    alert(error?.data?.statusMessage || 'โหลดสมุดจดไม่สำเร็จ ลองใหม่อีกครั้งนะ')
+  }
+}
+
+onMounted(loadSavedRecipes)
+watch(status, loadSavedRecipes)
 
 // ฟังก์ชันลบเมนู
-const deleteRecipe = (index) => {
+const deleteRecipe = async (index) => {
   if(confirm('แน่ใจนะว่าจะลบเมนูนี้ออกจากสมุดจด? 🥺')) {
-    // 1. ลบออกจากตัวแปรบนหน้าจอ
-    savedRecipes.value.splice(index, 1)
-    
-    // 2. บันทึกข้อมูลที่อัปเดตแล้วกลับไปทับใน localStorage
-    localStorage.setItem('savedRecipes', JSON.stringify(savedRecipes.value))
+    try {
+      await $fetch(`/api/recipes/${savedRecipes.value[index].savedId}`, { method: 'DELETE' })
+      savedRecipes.value.splice(index, 1)
+    } catch { alert('ลบเมนูไม่สำเร็จ ลองใหม่อีกครั้งนะ') }
   }
 }
 
 // ฟังก์ชันกดดูวิธีทำ
 const viewRecipe = (recipe) => {
-  // เปลี่ยนไปหน้า Result
+  useState('matchedRecipes').value = [recipe]
   router.push('/result')
 }
 </script>

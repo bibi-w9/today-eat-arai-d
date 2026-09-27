@@ -7,23 +7,15 @@
     <div class="absolute top-32 right-10 md:right-24 text-5xl animate-[bounce_6s_infinite_alternate] opacity-50">💖</div>
     <div class="absolute bottom-32 right-8 md:right-32 text-4xl animate-[bounce_3s_infinite_alternate-reverse] opacity-50">🍽️</div>
 
-    <div class="relative z-10 w-full max-w-xl lg:max-w-5xl bg-white/90 backdrop-blur-xl rounded-[3rem] p-6 md:p-10 lg:p-12 shadow-sm border-2 border-white my-auto transition-all">
+    <div class="relative z-10 w-full max-w-xl lg:max-w-5xl bg-white/90 backdrop-blur-xl rounded-[3rem] p-6 md:p-10 lg:p-12 shadow-sm border-2 border-white my-auto transition-all mt-10">
       
-      <!-- ปุ่ม "ดูเมนูที่บันทึกไว้" -->
-      <div class="w-full flex justify-end mb-4 -mt-2 md:-mt-6">
-        <button @click="router.push('/saved')" class="group inline-flex items-center gap-2 font-bold text-pink-500 bg-white border-2 border-pink-200 px-5 py-2.5 rounded-2xl shadow-[0_4px_0_0_#fbcfe8] hover:bg-pink-50 hover:border-pink-300 hover:shadow-[0_2px_0_0_#f9a8d4] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all">
-          สมุดจดเมนู <span class="group-hover:scale-125 transition-transform duration-300 text-lg">📖</span>
-        </button>
-      </div>
-
-      <!-- ================= หน้าที่ 1: แสดงรายการ 5 กล่อง ================= -->
+      <!-- ================= หน้าที่ 1: แสดงรายการเมนู ================= -->
       <div v-if="!selectedRecipe" class="flex flex-col items-center w-full animate-fade-in">
         <div class="text-center mb-10">
           <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight">เลือกเมนูเลย! ✨</h1>
           <p class="text-pink-500 font-bold mt-3 text-lg bg-pink-100 inline-block px-6 py-2 rounded-full">เจอเมนูแนะนำ จำนวน {{ matchedRecipes.length }} อย่าง</p>
         </div>
 
-        <!-- Grid กล่องเมนู -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full mb-8">
           <div 
             v-for="(recipe, index) in matchedRecipes" :key="index"
@@ -98,12 +90,10 @@
               </li>
             </ul>
             
-            <!-- ปุ่มสั่งซื้อ (Monetization Feature) แสดงเฉพาะเมื่อมีของขาด -->
             <div v-if="selectedRecipe.missing && selectedRecipe.missing.length > 0" class="mt-auto">
               <button @click="openDeliveryApp" class="w-full group/btn inline-flex items-center justify-center gap-2 font-extrabold text-white bg-green-500 px-5 py-3.5 rounded-2xl shadow-[0_4px_0_0_#15803d] hover:bg-green-600 hover:shadow-[0_2px_0_0_#15803d] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all">
                 <span class="text-xl">🛵</span> เปิดแอป Delivery เพื่อสั่งของที่ขาด
               </button>
-              <p class="text-[10px] text-gray-400 text-center mt-2 font-medium">* ได้รับส่วนแบ่ง Affiliate Commission เมื่อสั่งซื้อสำเร็จ</p>
             </div>
           </div>
 
@@ -137,59 +127,66 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { computed, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { computed, ref, onMounted, watch } from 'vue'
 
 const router = useRouter()
+const route = useRoute() 
+const { status, signIn } = useAuth()
 
-// 1. ดึงข้อมูล Array ของเมนูทั้งหมดมา
-const matchedRecipesState = useState('matchedRecipes')
-
+const matchedRecipesState = useState('matchedRecipes', () => [])
+if ((!matchedRecipesState.value || matchedRecipesState.value.length === 0) && import.meta.client) {
+  const stored = sessionStorage.getItem('matchedRecipes')
+  if (stored) matchedRecipesState.value = JSON.parse(stored)
+}
 if (!matchedRecipesState.value || matchedRecipesState.value.length === 0) {
   router.push('/')
 }
-
 const matchedRecipes = computed(() => matchedRecipesState.value || [])
-
-// 2. State สำหรับเก็บเมนูที่ผู้ใช้คลิกเลือก
 const selectedRecipe = ref(null)
 
-// 3. ฟังก์ชันบันทึกสูตรอาหารลง DB
-const saveRecipe = async () => {
-  if (!selectedRecipe.value) return
-  
+const saveRecipeToServer = async () => {
+  if (!selectedRecipe.value) return false
   try {
-    const response = await $fetch('/api/recipes', {
-      method: 'POST',
-      body: selectedRecipe.value
-    })
-
-    if (response.success) {
-      alert(response.message || 'บันทึกเมนูเรียบร้อย!')
-      router.push('/saved')
-    } else {
-      alert(response.message || 'เคยบันทึกเมนูนี้ไปแล้วน้า') 
-    }
-
+    const response = await $fetch('/api/recipes', { method: 'POST', body: selectedRecipe.value })
+    alert(response.message || 'บันทึกเมนูเรียบร้อยแล้ว!')
+    return response.success
   } catch (error) {
-    console.error('API Error:', error)
-    alert('บันทึกไม่ได้ เกิดข้อผิดพลาด 🥺')
+    alert(error?.data?.statusMessage || 'บันทึกไม่ได้ เกิดข้อผิดพลาด 🥺')
+    return false
   }
 }
 
-// 4. ฟังก์ชันลิงก์ไปแอปจริง (Universal Link ไปยัง GrabMart)
+const saveRecipe = async () => {
+  if (!selectedRecipe.value) return
+  
+  if (status.value !== 'authenticated') {
+    alert('ให้ล็อกอินก่อนนะ จากนั้นถึงจะบันทึกเมนูนี้เก็บไว้ได้! 🥺')
+    sessionStorage.setItem('pendingRecipe', JSON.stringify(selectedRecipe.value))
+    sessionStorage.setItem('matchedRecipes', JSON.stringify(matchedRecipes.value))
+    signIn('google', { callbackUrl: `${window.location.origin}${route.fullPath}` })
+    return
+  }
+  await saveRecipeToServer()
+}
+
+const resumePendingSave = async () => {
+  if (status.value !== 'authenticated' || !import.meta.client) return
+  const pending = sessionStorage.getItem('pendingRecipe')
+  if (!pending) return
+  try {
+    selectedRecipe.value = JSON.parse(pending)
+    sessionStorage.removeItem('pendingRecipe')
+    await saveRecipeToServer()
+  } catch { sessionStorage.removeItem('pendingRecipe') }
+}
+
+onMounted(resumePendingSave)
+watch(status, resumePendingSave)
+
 const openDeliveryApp = () => {
   if (!selectedRecipe.value || !selectedRecipe.value.missing) return
-  
-  // URL ไปยังเว็บ GrabMart (ระบบมือถือจะ Detect ว่าผู้ใช้มีแอป Grab ไหม ถ้ามีมันจะเด้งสลับไปเปิดแอปเองโดยอัตโนมัติ)
-  // อนาคตสามารถใส่ ?aff_id=XXXX ของเราต่อท้ายลิงก์ได้เลยเพื่อเก็บค่า Affiliate
-  //const deliveryUrl = 'https://food.grab.com/th/th/mart'
-  
-  // แสดง Alert แจ้งเตือนเพื่อให้คนฟัง Pitch เข้าใจว่ากำลังส่งเข้ากระบวนการเก็บเงิน Affiliate
   alert(`🚀 กำลังนำคุณไปยังแอป Delivery...\n(ในระบบจริงจะนำผู้ใช้เข้าแอป Delivery พร้อมแนบ Affiliate Tracking ID เพื่อรับค่าคอมมิชชัน)`)
-  
-  // เปิดแท็บใหม่พาผู้ใช้ไปที่แพลตฟอร์มปลายทาง
-  //window.open(deliveryUrl, '_blank')
 }
 </script>
 
