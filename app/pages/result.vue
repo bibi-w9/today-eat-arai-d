@@ -13,9 +13,9 @@
       🍽️</div>
     <div
       class="relative z-10 mt-16 w-full max-w-xl lg:max-w-5xl bg-white/90 backdrop-blur-xl rounded-[3rem] p-6 md:p-10 lg:p-12 shadow-sm border-2 border-white my-auto transition-all mt-10">
-      <button @click="router.push('/')"
+      <button @click="goBack"
         class="mb-6 inline-flex items-center gap-2 rounded-xl border border-pink-200 bg-white/80 px-4 py-2 font-semibold text-pink-600 shadow-sm transition hover:border-pink-300 hover:bg-pink-50 hover:text-pink-700">
-        ◂ กลับไปหน้าแรก
+        ◂ {{ fromSaved ? 'กลับ' : 'กลับไปหน้าแรก' }}
       </button>
       <!-- ================= หน้าที่ 1: แสดงรายการเมนู ================= -->
       <div v-if="isRestoringSavedRecipe" class="flex min-h-64 flex-col items-center justify-center text-center" role="status">
@@ -142,7 +142,7 @@
             class="group flex-1 inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-[1.5rem] transition-all duration-200 bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
             <span class="mr-2 group-hover:scale-110 transition-transform">🍽️</span> บันทึกเมนูนี้
           </button>
-          <button @click="selectedRecipe = null"
+          <button @click="router.push('/')"
             class="group flex-1 inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-[1.5rem] transition-all duration-200 text-pink-500 bg-white border-2 border-pink-200 shadow-[0_6px_0_0_#fbcfe8] hover:bg-pink-50 hover:border-pink-300 hover:shadow-[0_4px_0_0_#f9a8d4] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
             <span class="mr-2 group-hover:-rotate-45 transition-transform">↺</span> ทำเมนูอื่นต่อ
           </button>
@@ -170,6 +170,7 @@ if ((!matchedRecipesState.value || matchedRecipesState.value.length === 0) && im
   if (stored) matchedRecipesState.value = JSON.parse(stored)
 }
 const fromSaved = route.query.fromSaved === 'true'
+const goBack = () => router.push(fromSaved ? '/saved' : '/')
 if ((!matchedRecipesState.value || matchedRecipesState.value.length === 0) && !fromSaved) {
   router.push('/')
 }
