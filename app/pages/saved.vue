@@ -27,15 +27,21 @@
             <span class="mr-1 group-hover:rotate-12 transition-transform">🏠</span> หน้าแรก
           </button>
 
-          <!-- ปุ่มออกจากระบบ -->
-          <button @click="handleSignOut" class="group inline-flex items-center justify-center font-bold text-lg py-3 px-6 rounded-2xl transition-all duration-200 text-red-500 bg-white border-2 border-red-100 shadow-[0_4px_0_0_#fecaca] hover:bg-red-50 hover:shadow-[0_2px_0_0_#fca5a5] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px]">
-            <span class="mr-1 group-hover:translate-x-1 transition-transform">↪</span> ออกจากระบบ
-          </button>
         </div>
       </div>
 
+      <!-- ================= กรณียังไม่ได้เข้าสู่ระบบ ================= -->
+      <div v-if="status === 'unauthenticated'" class="flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl rounded-[3rem] p-10 md:p-16 shadow-sm border-2 border-red-400 max-w-2xl mx-auto mt-10 text-center">
+        <div class="text-7xl mb-6">🔒</div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-4">กรุณาเข้าสู่ระบบก่อนนะ</h2>
+        <p class="text-gray-500 font-medium mb-8 text-lg">เข้าสู่ระบบผ่านไอคอนโปรไฟล์ด้านบน เพื่อดูและเก็บเมนูโปรดของคุณไว้ในสมุดจด</p>
+        <button @click="goToLogin" class="inline-flex items-center justify-center font-bold text-xl py-4 px-10 rounded-[1.5rem] bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:translate-y-[2px] transition-all">
+          👤 ไปเข้าสู่ระบบ
+        </button>
+      </div>
+
       <!-- ================= กรณีมีเมนู (Grid Layout) ================= -->
-      <div v-if="savedRecipes.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+      <div v-else-if="savedRecipes.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
         
         <!-- การ์ดเมนูแต่ละอัน -->
         <div v-for="(recipe, index) in savedRecipes" :key="recipe.savedId || index" class="bg-white/90 backdrop-blur-xl rounded-[2rem] p-5 shadow-sm border-2 border-white hover:shadow-md hover:border-pink-200 transition-all duration-300 relative group flex flex-col">
@@ -72,7 +78,7 @@
       </div>
 
       <!-- ================= กรณีไม่มีเมนู (Empty State) ================= -->
-      <div v-else class="flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl rounded-[3rem] p-10 md:p-16 shadow-sm border-2 border-white max-w-2xl mx-auto mt-10 text-center">
+      <div v-else-if="status === 'authenticated'" class="flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl rounded-[3rem] p-10 md:p-16 shadow-sm border-2 border-white max-w-2xl mx-auto mt-10 text-center">
         <div class="text-7xl mb-6 animate-[bounce_2s_infinite]">🥺</div>
         <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-4">สมุดจดยังว่างเปล่าเลย!</h2>
         <p class="text-gray-500 font-medium mb-8 text-lg">คุณยังไม่ได้บันทึกเมนูไหนไว้เลย ลองค้นหาเมนูอร่อยๆ จากของในตู้เย็นดูไหม?</p>
@@ -92,19 +98,18 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const savedRecipes = ref([])
 
-const { status, signIn, signOut } = useAuth()
-
-const handleSignOut = async () => {
-  await signOut({ callbackUrl: `${window.location.origin}/` })
-}
+const { status } = useAuth()
+const profileOpen = useState('profileOpen', () => false)
 
 const loadSavedRecipes = async () => {
   if (status.value === 'loading') return
-  if (status.value === 'unauthenticated') {
-    await signIn('google', { callbackUrl: `${window.location.origin}/saved` })
-    return
-  }
+  if (status.value !== 'authenticated') return
   try {
+    const pending = import.meta.client ? sessionStorage.getItem('pendingRecipe') : null
+    if (pending) {
+      await $fetch('/api/recipes', { method: 'POST', body: JSON.parse(pending) })
+      sessionStorage.removeItem('pendingRecipe')
+    }
     const response = await $fetch('/api/recipes')
     savedRecipes.value = response.data || []
   } catch (error) {
@@ -113,7 +118,14 @@ const loadSavedRecipes = async () => {
 }
 
 onMounted(loadSavedRecipes)
-watch(status, loadSavedRecipes)
+watch(status, (value) => {
+  if (value === 'authenticated') loadSavedRecipes()
+})
+
+const goToLogin = () => {
+  profileOpen.value = true
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 // ฟังก์ชันลบเมนู
 const deleteRecipe = async (index) => {

@@ -161,10 +161,9 @@ const saveRecipe = async () => {
   if (!selectedRecipe.value) return
   
   if (status.value !== 'authenticated') {
-    alert('ให้ล็อกอินก่อนนะ จากนั้นถึงจะบันทึกเมนูนี้เก็บไว้ได้! 🥺')
     sessionStorage.setItem('pendingRecipe', JSON.stringify(selectedRecipe.value))
     sessionStorage.setItem('matchedRecipes', JSON.stringify(matchedRecipes.value))
-    signIn('google', { callbackUrl: `${window.location.origin}${route.fullPath}` })
+    router.push('/saved')
     return
   }
   await saveRecipeToServer()
