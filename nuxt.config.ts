@@ -47,5 +47,13 @@ export default defineNuxtConfig({
     roboflowVersion: '1',
     mongodbUri: process.env.MONGODB_URI,
     cloudinaryUrl: process.env.CLOUDINARY_URL
-  }
+},
+  // รวมการตั้งค่า Vite สำหรับทำ Polling บน Docker ไว้ที่นี่ที่เดียว
+  vite: {
+    server: {
+      watch: {
+        usePolling: true,
+      },
+    },
+  },
 })

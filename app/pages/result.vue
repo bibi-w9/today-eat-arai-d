@@ -1,68 +1,87 @@
 <template>
   <div class="relative min-h-screen bg-pink-50 flex flex-col items-center py-10 px-4 overflow-hidden">
-    
+
     <!-- ของตกแต่งลอยๆ พื้นหลัง -->
     <div class="absolute top-10 left-4 md:left-20 text-4xl animate-[bounce_4s_infinite_alternate] opacity-50">✨</div>
-    <div class="absolute bottom-20 left-10 md:left-32 text-5xl animate-[bounce_5s_infinite_alternate-reverse] opacity-50">🎉</div>
-    <div class="absolute top-32 right-10 md:right-24 text-5xl animate-[bounce_6s_infinite_alternate] opacity-50">💖</div>
-    <div class="absolute bottom-32 right-8 md:right-32 text-4xl animate-[bounce_3s_infinite_alternate-reverse] opacity-50">🍽️</div>
-
-    <div class="relative z-10 w-full max-w-xl lg:max-w-5xl bg-white/90 backdrop-blur-xl rounded-[3rem] p-6 md:p-10 lg:p-12 shadow-sm border-2 border-white my-auto transition-all mt-10">
-      
+    <div
+      class="absolute bottom-20 left-10 md:left-32 text-5xl animate-[bounce_5s_infinite_alternate-reverse] opacity-50">
+      🎉</div>
+    <div class="absolute top-32 right-10 md:right-24 text-5xl animate-[bounce_6s_infinite_alternate] opacity-50">💖
+    </div>
+    <div
+      class="absolute bottom-32 right-8 md:right-32 text-4xl animate-[bounce_3s_infinite_alternate-reverse] opacity-50">
+      🍽️</div>
+    <div
+      class="relative z-10 mt-16 w-full max-w-xl lg:max-w-5xl bg-white/90 backdrop-blur-xl rounded-[3rem] p-6 md:p-10 lg:p-12 shadow-sm border-2 border-white my-auto transition-all mt-10">
+      <button @click="router.push('/')"
+        class="mb-6 inline-flex items-center gap-2 rounded-xl border border-pink-200 bg-white/80 px-4 py-2 font-semibold text-pink-600 shadow-sm transition hover:border-pink-300 hover:bg-pink-50 hover:text-pink-700">
+        ◂ กลับไปหน้าแรก
+      </button>
       <!-- ================= หน้าที่ 1: แสดงรายการเมนู ================= -->
-      <div v-if="!selectedRecipe" class="flex flex-col items-center w-full animate-fade-in">
+      <div v-if="isRestoringSavedRecipe" class="flex min-h-64 flex-col items-center justify-center text-center" role="status">
+        <span class="mb-3 text-5xl">📖</span>
+        <p class="text-lg font-bold text-pink-600">กำลังเปิดเมนูที่บันทึกไว้...</p>
+      </div>
+
+      <div v-else-if="!selectedRecipe" class="flex flex-col items-center w-full animate-fade-in">
         <div class="text-center mb-10">
           <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight">เลือกเมนูเลย! ✨</h1>
-          <p class="text-pink-500 font-bold mt-3 text-lg bg-pink-100 inline-block px-6 py-2 rounded-full">เจอเมนูแนะนำ จำนวน {{ matchedRecipes.length }} อย่าง</p>
+          <p class="text-pink-500 font-bold mt-8 text-lg bg-pink-100 inline-block px-6 py-2 rounded-full">เจอเมนูแนะนำ
+            จำนวน {{ matchedRecipes.length }} อย่าง</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full mb-8">
-          <div 
-            v-for="(recipe, index) in matchedRecipes" :key="index"
-            @click="selectedRecipe = recipe"
-            class="cursor-pointer bg-pink-50/50 rounded-[2.5rem] p-6 shadow-sm border-2 border-pink-100 hover:shadow-[0_8px_0_0_#fbcfe8] hover:-translate-y-2 hover:border-pink-300 transition-all duration-300 group flex flex-col items-center text-center"
-          >
-            <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white overflow-hidden shadow-md mb-5 relative">
-              <img :src="recipe.image || 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div v-for="(recipe, index) in matchedRecipes" :key="index" @click="selectedRecipe = recipe"
+            @keydown.enter.prevent="selectedRecipe = recipe" @keydown.space.prevent="selectedRecipe = recipe"
+            role="button" tabindex="0" :aria-label="`ดูรายละเอียดเมนู ${recipe.name}`"
+            class="cursor-pointer bg-pink-50/50 rounded-[2.5rem] p-6 shadow-sm border-2 border-pink-100 hover:shadow-[0_8px_0_0_#fbcfe8] hover:-translate-y-2 hover:border-pink-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-pink-300 transition-all duration-300 group flex flex-col items-center text-center">
+            <div
+              class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white overflow-hidden shadow-md mb-5 relative">
+              <img
+                :src="getRecipeImage(recipe)"
+                :alt="recipe.name || 'เมนูอาหาร'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             </div>
-            <h3 class="font-extrabold text-xl text-gray-800 mb-3 line-clamp-1 group-hover:text-pink-600 transition-colors">{{ recipe.name }}</h3>
+            <h3
+              class="font-extrabold text-xl text-gray-800 mb-3 line-clamp-1 group-hover:text-pink-600 transition-colors">
+              {{ recipe.name }}</h3>
             <div class="flex gap-2">
-              <span class="text-xs font-bold bg-purple-100 text-purple-600 px-3 py-1.5 rounded-full">🎯 {{ recipe.matchPercent }}%</span>
-              <span class="text-xs font-bold bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full">🔥 {{ recipe.caloriesTotal || 0 }} kcal</span>
+              <span class="text-xs font-bold bg-purple-100 text-purple-600 px-3 py-1.5 rounded-full">🎯 {{
+                recipe.matchPercent }}%</span>
+              <span class="text-xs font-bold bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full">🔥 {{
+                recipe.caloriesTotal || 0 }} kcal</span>
             </div>
           </div>
         </div>
-
-        <button @click="router.push('/')" class="text-gray-400 hover:text-pink-500 font-bold transition-colors">
-          ↺ กลับไปหน้าแรก
-        </button>
       </div>
 
       <!-- ================= หน้าที่ 2: แสดงรายละเอียดเมนู ================= -->
-      <div v-else class="w-full animate-fade-in">
-        
-        <button @click="selectedRecipe = null" class="mb-6 text-gray-400 hover:text-pink-500 font-bold flex items-center gap-1 transition-colors">
-          ◂ กลับไปหน้าเลือกเมนู
-        </button>
+      <div v-else-if="selectedRecipe" class="w-full animate-fade-in">
 
         <div class="flex flex-col items-center mb-12 border-b-2 border-pink-100/50 pb-10">
           <div class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight">ทาด๊าาา! ✨</h1>
-            <p class="text-pink-500 font-bold mt-3 text-lg bg-pink-100 inline-block px-6 py-2 rounded-full">เสกเมนูนี้มาให้คุณ</p>
+            <p class="text-pink-500 font-bold mt-3 text-lg bg-pink-100 inline-block px-6 py-2 rounded-full">
+              เสกเมนูนี้มาให้คุณ</p>
           </div>
 
-          <div class="w-56 h-56 md:w-72 md:h-72 rounded-full border-4 border-pink-200 overflow-hidden shadow-xl mb-6 relative group">
-            <img :src="selectedRecipe.image || 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"/>
+          <div
+            class="w-56 h-56 md:w-72 md:h-72 rounded-full border-4 border-pink-200 overflow-hidden shadow-xl mb-6 relative group">
+            <img
+              :src="getRecipeImage(selectedRecipe)"
+              :alt="selectedRecipe.name || 'เมนูอาหาร'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" />
             <div class="absolute inset-0 bg-pink-500/10 rounded-full pointer-events-none"></div>
           </div>
 
-          <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 text-center mb-5 leading-snug">{{ selectedRecipe.name }}</h2>
-          
+          <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 text-center mb-5 leading-snug">{{
+            selectedRecipe.name }}</h2>
+
           <div class="flex flex-wrap gap-3 justify-center">
-            <span class="inline-flex items-center gap-2 bg-rose-100 text-rose-600 px-6 py-2.5 rounded-2xl font-extrabold text-base shadow-sm border-2 border-rose-200 cursor-default">
+            <span
+              class="inline-flex items-center gap-2 bg-rose-100 text-rose-600 px-6 py-2.5 rounded-2xl font-extrabold text-base shadow-sm border-2 border-rose-200 cursor-default">
               🔥 {{ selectedRecipe.caloriesTotal || 0 }} kcal
             </span>
-            <span class="inline-flex items-center gap-2 bg-purple-100 text-purple-600 px-6 py-2.5 rounded-2xl font-extrabold text-base shadow-sm border-2 border-purple-200 cursor-default">
+            <span
+              class="inline-flex items-center gap-2 bg-purple-100 text-purple-600 px-6 py-2.5 rounded-2xl font-extrabold text-base shadow-sm border-2 border-purple-200 cursor-default">
               🎯 ความเป๊ะ {{ selectedRecipe.matchPercent || 0 }}%
             </span>
           </div>
@@ -75,8 +94,9 @@
               <span class="text-3xl">🛒</span> สิ่งที่คุณมี
             </h3>
             <ul class="space-y-3 mb-6">
-              <li v-for="(item, index) in selectedRecipe.matched" :key="'match-'+index" class="flex justify-between items-center text-green-600 font-medium border-b border-pink-100/50 pb-2">
-                <span class="flex items-center gap-2"><span class="text-xl">✅</span> {{ item }}</span>
+              <li v-for="(item, index) in selectedRecipe.matched" :key="'match-' + index"
+                class="flex justify-between items-center text-green-600 font-medium border-b border-pink-100/50 pb-2">
+                <span class="flex items-center gap-2"><span class="text-xl">✅</span> {{ formatIngredient(item) }}</span>
               </li>
             </ul>
 
@@ -84,14 +104,17 @@
               <span class="text-2xl">🏃</span> สิ่งที่ต้องซื้อเพิ่ม
             </h3>
             <ul class="space-y-3 mb-6">
-              <li v-if="!selectedRecipe.missing || selectedRecipe.missing.length === 0" class="text-gray-500 italic">มีครบทุกอย่างแล้ว เย้!</li>
-              <li v-for="(item, index) in selectedRecipe.missing" :key="'miss-'+index" class="flex justify-between items-center text-red-500 font-medium border-b border-pink-100/50 pb-2">
-                <span class="flex items-center gap-2"><span class="text-xl">❌</span> {{ item }}</span>
+              <li v-if="!selectedRecipe.missing || selectedRecipe.missing.length === 0" class="text-gray-500 italic">
+                มีครบทุกอย่างแล้ว เย้!</li>
+              <li v-for="(item, index) in selectedRecipe.missing" :key="'miss-' + index"
+                class="flex justify-between items-center text-red-500 font-medium border-b border-pink-100/50 pb-2">
+                <span class="flex items-center gap-2"><span class="text-xl">❌</span> {{ formatIngredient(item) }}</span>
               </li>
             </ul>
-            
+
             <div v-if="selectedRecipe.missing && selectedRecipe.missing.length > 0" class="mt-auto">
-              <button @click="openDeliveryApp" class="w-full group/btn inline-flex items-center justify-center gap-2 font-extrabold text-white bg-green-500 px-5 py-3.5 rounded-2xl shadow-[0_4px_0_0_#15803d] hover:bg-green-600 hover:shadow-[0_2px_0_0_#15803d] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all">
+              <button @click="openDeliveryApp"
+                class="w-full group/btn inline-flex items-center justify-center gap-2 font-extrabold text-white bg-green-500 px-5 py-3.5 rounded-2xl shadow-[0_4px_0_0_#15803d] hover:bg-green-600 hover:shadow-[0_2px_0_0_#15803d] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all">
                 <span class="text-xl">🛵</span> เปิดแอป Delivery เพื่อสั่งของที่ขาด
               </button>
             </div>
@@ -103,8 +126,11 @@
               <span class="text-3xl">👩🏻‍🍳</span> วิธีการทำ
             </h3>
             <div class="space-y-5">
-              <div v-for="(step, index) in selectedRecipe.steps" :key="index" class="flex gap-4 md:gap-5 bg-white border-2 border-pink-100 rounded-3xl p-5 md:p-6 shadow-sm group">
-                <div class="flex-shrink-0 w-12 h-12 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center font-extrabold text-xl shadow-inner">{{ index + 1 }}</div>
+              <div v-for="(step, index) in selectedRecipe.steps" :key="index"
+                class="flex gap-4 md:gap-5 bg-white border-2 border-pink-100 rounded-3xl p-5 md:p-6 shadow-sm group">
+                <div
+                  class="flex-shrink-0 w-12 h-12 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center font-extrabold text-xl shadow-inner">
+                  {{ index + 1 }}</div>
                 <p class="text-gray-600 font-medium pt-2 leading-relaxed text-base">{{ step }}</p>
               </div>
             </div>
@@ -112,10 +138,12 @@
         </div>
 
         <div class="flex flex-col md:flex-row justify-center gap-4 max-w-2xl mx-auto">
-          <button @click="saveRecipe" class="group flex-1 inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-[1.5rem] transition-all duration-200 bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
+          <button @click="saveRecipe"
+            class="group flex-1 inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-[1.5rem] transition-all duration-200 bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
             <span class="mr-2 group-hover:scale-110 transition-transform">🍽️</span> บันทึกเมนูนี้
           </button>
-          <button @click="selectedRecipe = null" class="group flex-1 inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-[1.5rem] transition-all duration-200 text-pink-500 bg-white border-2 border-pink-200 shadow-[0_6px_0_0_#fbcfe8] hover:bg-pink-50 hover:border-pink-300 hover:shadow-[0_4px_0_0_#f9a8d4] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
+          <button @click="selectedRecipe = null"
+            class="group flex-1 inline-flex items-center justify-center font-bold text-xl py-4 px-8 rounded-[1.5rem] transition-all duration-200 text-pink-500 bg-white border-2 border-pink-200 shadow-[0_6px_0_0_#fbcfe8] hover:bg-pink-50 hover:border-pink-300 hover:shadow-[0_4px_0_0_#f9a8d4] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
             <span class="mr-2 group-hover:-rotate-45 transition-transform">↺</span> ทำเมนูอื่นต่อ
           </button>
         </div>
@@ -123,6 +151,7 @@
       </div>
 
     </div>
+
   </div>
 </template>
 
@@ -131,35 +160,42 @@ import { useRouter, useRoute } from 'vue-router'
 import { computed, ref, onMounted, watch } from 'vue'
 
 const router = useRouter()
-const route = useRoute() 
+const route = useRoute()
 const { status, signIn } = useAuth()
+const { notify } = useAppToast()
 
 const matchedRecipesState = useState('matchedRecipes', () => [])
 if ((!matchedRecipesState.value || matchedRecipesState.value.length === 0) && import.meta.client) {
   const stored = sessionStorage.getItem('matchedRecipes')
   if (stored) matchedRecipesState.value = JSON.parse(stored)
 }
-if (!matchedRecipesState.value || matchedRecipesState.value.length === 0) {
+const fromSaved = route.query.fromSaved === 'true'
+if ((!matchedRecipesState.value || matchedRecipesState.value.length === 0) && !fromSaved) {
   router.push('/')
 }
 const matchedRecipes = computed(() => matchedRecipesState.value || [])
+const requestedSavedId = String(route.query.savedId || '')
 const selectedRecipe = ref(null)
-
+if (fromSaved && matchedRecipes.value.length > 0) {
+  selectedRecipe.value = matchedRecipes.value.find(recipe => String(recipe.savedId || '') === requestedSavedId)
+    || (requestedSavedId ? null : matchedRecipes.value[0])
+}
+const isRestoringSavedRecipe = ref(fromSaved && !selectedRecipe.value)
 const saveRecipeToServer = async () => {
   if (!selectedRecipe.value) return false
   try {
     const response = await $fetch('/api/recipes', { method: 'POST', body: selectedRecipe.value })
-    alert(response.message || 'บันทึกเมนูเรียบร้อยแล้ว!')
+    notify(response.message || 'บันทึกเมนูเรียบร้อยแล้ว!', response.success ? 'success' : 'info')
     return response.success
   } catch (error) {
-    alert(error?.data?.statusMessage || 'บันทึกไม่ได้ เกิดข้อผิดพลาด 🥺')
+    notify(error?.data?.statusMessage || 'บันทึกไม่ได้ เกิดข้อผิดพลาด 🥺', 'error')
     return false
   }
 }
 
 const saveRecipe = async () => {
   if (!selectedRecipe.value) return
-  
+
   if (status.value !== 'authenticated') {
     sessionStorage.setItem('pendingRecipe', JSON.stringify(selectedRecipe.value))
     sessionStorage.setItem('matchedRecipes', JSON.stringify(matchedRecipes.value))
@@ -180,12 +216,56 @@ const resumePendingSave = async () => {
   } catch { sessionStorage.removeItem('pendingRecipe') }
 }
 
-onMounted(resumePendingSave)
+const restoreSavedRecipe = async () => {
+  if (!fromSaved || selectedRecipe.value || !import.meta.client) return
+
+  try {
+    const storedRecipe = sessionStorage.getItem('viewedSavedRecipe')
+    if (storedRecipe) {
+      const recipe = JSON.parse(storedRecipe)
+      if (!requestedSavedId || String(recipe.savedId || '') === requestedSavedId) {
+        selectedRecipe.value = recipe
+        matchedRecipesState.value = [recipe]
+      }
+    }
+
+    if (!selectedRecipe.value && requestedSavedId) {
+      const response = await $fetch('/api/recipes')
+      const recipe = (response.data || []).find(item => String(item.savedId || '') === requestedSavedId)
+      if (recipe) {
+        selectedRecipe.value = recipe
+        matchedRecipesState.value = [recipe]
+      }
+    }
+  } catch {
+    // If the saved item cannot be restored, return to the saved recipes page below.
+  } finally {
+    isRestoringSavedRecipe.value = false
+  }
+
+  if (!selectedRecipe.value) router.replace('/saved')
+}
+
+onMounted(async () => {
+  await restoreSavedRecipe()
+  await resumePendingSave()
+})
 watch(status, resumePendingSave)
 
+const getRecipeImage = (recipe) => {
+  const image = Array.isArray(recipe?.image) ? recipe.image[0] : recipe?.image
+  return image || 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80'
+}
+
+const formatIngredient = (name) => {
+  const ingredient = selectedRecipe.value?.ingredients?.find(item => item?.name === name)
+  if (!ingredient || ingredient.amount === undefined || ingredient.amount === null || ingredient.amount === '') return name
+  return `${name} · ${ingredient.amount}${ingredient.unit ? ` ${ingredient.unit}` : ''}`
+}
+
 const openDeliveryApp = () => {
-  if (!selectedRecipe.value || !selectedRecipe.value.missing) return
-  alert(`🚀 กำลังนำคุณไปยังแอป Delivery...\n(ในระบบจริงจะนำผู้ใช้เข้าแอป Delivery พร้อมแนบ Affiliate Tracking ID เพื่อรับค่าคอมมิชชัน)`)
+  if (!selectedRecipe.value?.missing?.length) return
+  notify('ฟีเจอร์เชื่อมต่อแอป Delivery ยังไม่พร้อมใช้งาน', 'info')
 }
 </script>
 
@@ -193,8 +273,16 @@ const openDeliveryApp = () => {
 .animate-fade-in {
   animation: fadeIn 0.4s ease-in-out;
 }
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

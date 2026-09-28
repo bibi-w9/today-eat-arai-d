@@ -41,6 +41,7 @@ export async function findMatchingRecipes(
       image: recipe.image,
       cookingMethod: recipe.cookingMethod,
       categories: recipe.categories,
+      ingredients: ingredientsList,
       steps: recipe.steps,
       caloriesTotal: recipe.caloriesTotal,
       matchPercent,

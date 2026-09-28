@@ -8,12 +8,13 @@
     <div class="absolute bottom-32 right-16 md:right-40 text-4xl animate-[bounce_3s_infinite_alternate-reverse] opacity-50">🔪</div>
 
     <!-- กล่องเนื้อหาหลัก -->
-    <div class="relative z-10 w-full max-w-lg bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-10 shadow-sm border-2 border-white transition-all">
+    <div class="relative z-10 w-full mt-16 max-w-3xl bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-10 shadow-sm border-2 border-white transition-all">
       
       <!-- ปุ่มย้อนกลับ (ใช้ router.back() เพื่อกลับไปหน้าก่อนหน้าพร้อมจำค่าเดิม) -->
-      <button @click="router.back()" class="absolute top-6 left-6 text-gray-400 hover:text-pink-500 transition-colors flex items-center gap-1 text-sm font-bold">
+      <button @click="router.back()" class="mb-6 inline-flex items-center gap-2 rounded-xl border border-pink-200 bg-white/80 px-4 py-2 font-semibold text-pink-600 shadow-sm transition hover:border-pink-300 hover:bg-pink-50 hover:text-pink-700">
         <span>◂ กลับ</span>
       </button>
+
 
       <div class="text-center mb-8 mt-4">
         <h2 class="text-3xl font-extrabold text-gray-800 tracking-tight">อยากให้<span class="text-pink-500">ทำอาหาร</span>แบบไหน? 🧑‍🍳</h2>
@@ -21,10 +22,10 @@
       </div>
 
       <!-- วิธีการทำอาหาร (วนลูปจาก filteredMethods แทน methods เดิม) -->
-      <div class="grid grid-cols-2 gap-4 mb-8">
-        <button 
+        <div class="mb-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+        <button
           v-for="method in filteredMethods" :key="method.id"
-          @click="selectedMethod = method.id"
+          @click="selectMethod(method.id)"
           class="flex flex-col items-center justify-center p-5 rounded-3xl border-4 transition-all duration-300 group"
           :class="selectedMethod === method.id ? 'bg-pink-50 border-pink-400 text-pink-600 shadow-md scale-105' : 'bg-white border-pink-100 text-gray-400 hover:bg-pink-50 hover:border-pink-200 hover:-translate-y-1'"
         >
@@ -49,21 +50,29 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue' // ดึง computed เข้ามาใช้งาน
+import { ref, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute() 
 
-const selectedMethod = ref('')
+const selectedMethod = ref(String(route.query.method || ''))
+watch(() => route.query.method, (value) => {
+  selectedMethod.value = String(value || '')
+})
+
+const selectMethod = (method) => {
+  selectedMethod.value = method
+  router.replace({ query: { ...route.query, method } })
+}
 
 // ข้อมูลวิธีการทำอาหารทั้งหมด (เก็บไว้เป็นฐานข้อมูลหลัก)
 const allMethods = [
   { id: 'fry', label: 'ทอด', icon: '🍳' },
   { id: 'stir_fry', label: 'ผัด', icon: '🥘' },
   { id: 'boil', label: 'ต้ม / แกง', icon: '🍲' },
-  { id: 'bake', label: 'ย่าง / อบ', icon: '🔥' },
-  { id: 'steam', label: 'นึ่ง', icon: '🥟' },
+  { id: 'microwave', label: 'ไมโครเวฟ / อบ', icon: '♨️' },
+  { id: 'steamed', label: 'นึ่ง', icon: '🥟' },
 ]
 
 // สร้าง Computed คัดกรองวิธีการทำอาหารแบบเรียลไทม์
@@ -71,7 +80,7 @@ const filteredMethods = computed(() => {
   // ดึงค่าหมวดหมู่ที่ส่งมาจากหน้าแรก
   const category = route.query.category 
 
-  // ถ้าหมวดหมู่คือ 'healthy' ให้ตัด 'fry' (ทอด) และ 'salad' (ยำ) ทิ้งไป
+  // ถ้าหมวดหมู่คือ 'healthy' ให้ตัดเมนูทอดออก
   if (category === 'healthy') {
     return allMethods.filter(method => method.id !== 'fry' && method.id !== 'salad')
   }

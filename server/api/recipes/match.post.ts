@@ -1,7 +1,7 @@
 import { findMatchingRecipes } from '~~/server/services/recipeService'
 
 const ALLOWED_CATEGORIES = ['healthy', 'normal', 'high protein', 'vegan']
-const ALLOWED_METHODS = ['fry', 'stir_fry', 'boil', 'bake', 'steam']
+const ALLOWED_METHODS = ['fry', 'stir_fry', 'boil', 'microwave', 'steamed']
 
 export default defineEventHandler(async (event) => {
   const contentType = getHeader(event, 'content-type') || ''
