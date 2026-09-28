@@ -39,8 +39,8 @@
         class="flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl rounded-[3rem] p-10 md:p-16 shadow-sm border-2 border-red-400 max-w-2xl mx-auto mt-10 text-center">
         <div class="text-7xl mb-6">🔒</div>
         <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-4">กรุณาเข้าสู่ระบบก่อนนะ</h2>
-        <p class="text-gray-500 font-medium mb-8 text-lg">เข้าสู่ระบบผ่านไอคอนโปรไฟล์ด้านบน
-          เพื่อดูและเก็บเมนูโปรดของคุณไว้ในสมุดจด</p>
+        <p class="text-gray-500 font-medium mb-8 text-lg">เข้าสู่ระบบด้วยบัญชี Google ของคุณ
+          เพื่อดู<br>และเก็บเมนูโปรดของคุณไว้ในสมุดจด</p>
         <button @click="goToLogin"
           class="inline-flex items-center justify-center font-bold text-xl py-4 px-10 rounded-[1.5rem] bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:translate-y-[2px] transition-all">
           👤 ไปเข้าสู่ระบบ
