@@ -10,19 +10,20 @@
           aria-controls="mobile-top-menu"
           @click="toggleMobileMenu"
         >
-          เมนู <span aria-hidden="true">{{ mobileMenuOpen ? '✕' : '☰' }}</span>
+          เมนู <span class="motion-wiggle inline-block" aria-hidden="true">{{ mobileMenuOpen ? '✕' : '☰' }}</span>
         </button>
 
       <div v-if="mobileMenuOpen" id="mobile-top-menu" class="absolute right-0 top-full mt-2 flex w-56 flex-col gap-2 rounded-2xl border-2 border-pink-100 bg-white p-3 shadow-xl">
         <button v-if="route.path !== '/saved'" @click="mobileMenuOpen = false; handleSavedMenuClick()" class="flex items-center justify-between rounded-xl bg-pink-50 px-3 py-2.5 font-bold text-pink-600">
-          สมุดจดเมนู <span aria-hidden="true">📖</span>
+          สมุดจดเมนู <span class="motion-wiggle inline-block" aria-hidden="true">📖</span>
         </button>
         <div ref="mobileProfileDropdownRef" class="relative" @mouseenter="cancelProfileClose" @mouseleave="scheduleProfileClose">
           <button @click="cancelProfileClose(); profileOpen = !profileOpen" class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left font-bold text-pink-600 hover:bg-pink-50" aria-label="เมนูโปรไฟล์" :aria-expanded="profileOpen">
             <img v-if="user?.image" :src="user.image" :alt="user.name || 'โปรไฟล์'" class="h-8 w-8 rounded-full object-cover" />
-            <span v-else class="flex h-8 w-8 items-center justify-center rounded-full bg-pink-100">👤</span>
+            <span v-else class="motion-bounce flex h-8 w-8 items-center justify-center rounded-full bg-pink-100">👤</span>
             <span class="text-sm">โปรไฟล์</span>
           </button>
+          <Transition name="dropdown">
           <div v-if="profileOpen" class="mt-2 rounded-xl border border-pink-100 bg-white p-3">
             <template v-if="status === 'authenticated'">
               <p class="mb-2 truncate text-sm font-bold text-gray-800">{{ user?.name || 'ผู้ใช้งาน' }}</p>
@@ -32,13 +33,14 @@
             <p v-else-if="status === 'loading'" class="text-sm text-gray-500" role="status">กำลังตรวจสอบสถานะบัญชี...</p>
             <NuxtLink v-else to="/signup" @click="profileOpen = false; mobileMenuOpen = false" class="block rounded-xl bg-pink-500 py-2 text-center font-bold text-white">ไปหน้าเข้าสู่ระบบ</NuxtLink>
           </div>
+          </Transition>
         </div>
       </div>
       </div>
 
       <div class="hidden items-center gap-3 sm:flex">
       <button v-if="route.path !== '/saved'" @click="handleSavedMenuClick" class="group inline-flex items-center gap-2 font-bold text-pink-500 bg-white/90 backdrop-blur-sm border-2 border-pink-200 px-5 py-2.5 rounded-2xl shadow-[0_4px_0_0_#fbcfe8] hover:bg-pink-50 hover:translate-y-[2px] hover:shadow-[0_2px_0_0_#f9a8d4] active:shadow-none active:translate-y-[4px] transition-all">
-        สมุดจดเมนู <span class="group-hover:scale-125 transition-transform duration-300 text-lg">📖</span>
+        สมุดจดเมนู <span class="motion-wiggle inline-block text-lg">📖</span>
       </button>
       <div
         ref="profileDropdownRef"
@@ -48,12 +50,13 @@
       >
         <button @click="cancelProfileClose(); profileOpen = !profileOpen" class="flex items-center gap-2 rounded-full bg-white/95 border-2 border-pink-200 p-1.5 pr-3 shadow-[0_4px_0_0_#fbcfe8] hover:bg-pink-50 transition-all" aria-label="เมนูโปรไฟล์">
           <img v-if="user?.image" :src="user.image" :alt="user.name || 'โปรไฟล์'" class="w-10 h-10 rounded-full object-cover" />
-          <span v-else class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-xl">👤</span>
+          <span v-else class="motion-bounce w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-xl">👤</span>
           <span class="hidden sm:inline font-bold text-pink-600">โปรไฟล์</span>
         </button>
 
         <div v-if="profileOpen" class="absolute right-0 top-full h-3 w-64" aria-hidden="true"></div>
 
+        <Transition name="dropdown">
         <div v-if="profileOpen" class="absolute right-0 mt-3 w-64 rounded-2xl bg-white border-2 border-pink-100 p-4 shadow-xl">
           <template v-if="status === 'authenticated'">
             <div class="flex items-center gap-3 mb-3">
@@ -76,12 +79,13 @@
             </NuxtLink>
           </template>
         </div>
+        </Transition>
       </div>
       </div>
     </div>
 
     <NuxtRouteAnnouncer />
-    <NuxtPage />
+    <NuxtPage :transition="{ name: 'page' }" />
     <ScrollToTop />
     <AppToast />
   </div>
@@ -184,11 +188,94 @@ body,
   background-color: #fdf2f8;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   margin: 0;
 }
 
 body {
   font-family: 'Mali', 'Quicksand', sans-serif;
+}
+
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transform-origin: top right;
+  transition: opacity 160ms ease, transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.97);
+}
+
+.page-enter-active {
+  will-change: opacity, transform;
+  transition: opacity 800ms cubic-bezier(0.22, 1, 0.36, 1), transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: center center;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(4px) scale(0.99);
+}
+
+.motion-wiggle,
+.motion-bounce:not(.flex) {
+  display: inline-block;
+}
+
+.motion-wiggle:hover,
+button:hover .motion-wiggle,
+a:hover .motion-wiggle,
+button:focus-visible .motion-wiggle,
+a:focus-visible .motion-wiggle,
+button:active .motion-wiggle {
+  animation: icon-wiggle 520ms ease-in-out;
+}
+
+.motion-bounce:hover,
+button:hover .motion-bounce,
+a:hover .motion-bounce,
+button:focus-visible .motion-bounce,
+a:focus-visible .motion-bounce,
+button:active .motion-bounce {
+  animation: icon-bounce 560ms cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+
+.motion-pulse {
+  display: inline-block;
+  animation: soft-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes icon-wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-12deg); }
+  55% { transform: rotate(10deg); }
+  80% { transform: rotate(-5deg); }
+}
+
+@keyframes icon-bounce {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-5px); }
+  65% { transform: translateY(1px); }
+}
+
+@keyframes soft-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 </style>

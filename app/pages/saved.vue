@@ -17,12 +17,12 @@
       <div class="mb-6 flex items-center justify-between">
         <button @click="router.back()" aria-label="ย้อนกลับ"
           class="group inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-pink-200 bg-white/90 p-0 text-sm font-bold text-pink-500 shadow-[0_4px_0_0_#fbcfe8] backdrop-blur-sm transition-all hover:bg-pink-50 hover:translate-y-[2px] hover:shadow-[0_2px_0_0_#f9a8d4] active:shadow-none active:translate-y-[4px] sm:h-auto sm:w-auto sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
-          <span aria-hidden="true" class="group-hover:-translate-x-1 transition-transform sm:text-lg">◀</span>
+          <span aria-hidden="true" class="motion-wiggle sm:text-lg">◀</span>
           <span class="sr-only sm:not-sr-only">ย้อนกลับ</span>
         </button>
         <NuxtLink to="/" aria-label="หน้าแรก"
           class="group inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-gray-200 bg-white p-0 font-bold text-gray-500 shadow-[0_4px_0_0_#e5e7eb] transition-all hover:bg-gray-50 hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] sm:h-auto sm:w-auto sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
-          <span aria-hidden="true" class="group-hover:rotate-12 transition-transform">🏠</span>
+          <span aria-hidden="true" class="motion-wiggle">🏠</span>
           <span class="sr-only sm:not-sr-only">หน้าแรก</span>
         </NuxtLink>
       </div>
@@ -34,13 +34,17 @@
         </h1>
       </div>
 
-      <div v-if="status === 'loading'" class="mx-auto mt-10 max-w-2xl rounded-[3rem] border-2 border-white bg-white/80 p-10 text-center shadow-sm" role="status">
-        <div class="mb-4 text-6xl">📖</div>
-        <p class="font-bold text-pink-600">กำลังเปิดสมุดจดของคุณ...</p>
+      <div v-if="status === 'loading' || (status === 'authenticated' && isLoadingSaved)" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" role="status" aria-label="กำลังโหลดเมนูที่บันทึกไว้">
+        <article v-for="item in 4" :key="item" class="animate-pulse rounded-[1.5rem] border-2 border-white bg-white/90 p-4 shadow-sm sm:rounded-[2rem] sm:p-5" aria-hidden="true">
+          <div class="mb-4 aspect-square rounded-2xl bg-pink-100"></div>
+          <div class="mb-3 h-5 w-3/4 rounded-full bg-pink-100"></div>
+          <div class="mb-6 flex gap-2"><div class="h-7 w-20 rounded-xl bg-rose-100"></div><div class="h-7 w-24 rounded-xl bg-blue-100"></div></div>
+          <div class="h-12 rounded-2xl bg-pink-100"></div>
+        </article>
       </div>
 
       <!-- ================= กรณียังไม่ได้เข้าสู่ระบบ ================= -->
-      <div v-if="status === 'unauthenticated'"
+      <div v-else-if="status === 'unauthenticated'"
         class="mx-auto mt-8 flex max-w-2xl flex-col items-center justify-center rounded-[2rem] border-2 border-red-400 bg-white/80 p-6 text-center shadow-sm backdrop-blur-xl sm:mt-10 sm:rounded-[3rem] sm:p-10 md:p-16">
         <div class="text-7xl mb-6">🔒</div>
         <h2 class="mb-4 text-xl font-extrabold text-gray-800 sm:text-2xl md:text-3xl">กรุณาเข้าสู่ระบบก่อนนะ</h2>
@@ -106,7 +110,7 @@
           จากของในตู้เย็นดูไหม?</p>
         <button @click="router.push('/upload')"
           class="group inline-flex items-center justify-center rounded-[1.5rem] bg-pink-500 px-6 py-4 text-lg font-bold text-white shadow-[0_6px_0_0_#9d174d] transition-all duration-200 hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px] sm:px-10 sm:text-xl">
-          <span class="mr-2 group-hover:scale-125 transition-transform duration-300">✨</span> ไปเสกเมนูกันเลย!
+          <span class="motion-bounce mr-2">✨</span> ไปเสกเมนูกันเลย!
         </button>
       </div>
 
@@ -166,6 +170,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const savedRecipes = ref([])
+const isLoadingSaved = ref(true)
 const showDeleteModal = ref(false)
 const recipeToDelete = ref(null)
 const isDeleting = ref(false)
@@ -176,7 +181,8 @@ const { notify } = useAppToast()
 
 const loadSavedRecipes = async () => {
   if (status.value === 'loading') return
-  if (status.value !== 'authenticated') return
+  if (status.value !== 'authenticated') { isLoadingSaved.value = false; return }
+  isLoadingSaved.value = true
   try {
     const pending = import.meta.client ? sessionStorage.getItem('pendingRecipe') : null
     if (pending) {
@@ -187,6 +193,8 @@ const loadSavedRecipes = async () => {
     savedRecipes.value = response.data || []
   } catch (error) {
     notify(error?.data?.statusMessage || 'โหลดสมุดจดไม่สำเร็จ ลองใหม่อีกครั้งนะ', 'error')
+  } finally {
+    isLoadingSaved.value = false
   }
 }
 
@@ -247,12 +255,12 @@ const getRecipeImage = (recipe) => {
 <style scoped>
 .delete-modal-enter-active,
 .delete-modal-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 220ms ease;
 }
 
 .delete-modal-enter-active section,
 .delete-modal-leave-active section {
-  transition: transform 0.2s ease;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .delete-modal-enter-from,

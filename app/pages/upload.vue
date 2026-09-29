@@ -1,5 +1,6 @@
 <template>
   <div class="relative flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-pink-50 p-4 sm:min-h-[calc(100dvh-4.5rem)] sm:p-6">
+    <ConfettiEffect :show="showConfetti" />
     <main
       class="relative z-10 w-full max-w-6xl rounded-[2rem] border-2 border-white bg-white/95 p-5 shadow-sm sm:rounded-[2.5rem] sm:p-7 md:p-10">
       <div class="mb-6 flex items-center justify-between">
@@ -11,7 +12,7 @@
           <span class="rounded-full bg-pink-100 px-3 py-1 text-xs font-bold text-pink-600 sm:px-4 sm:text-sm">สเต็ป 3/4</span>
           <NuxtLink to="/" aria-label="หน้าแรก"
             class="group inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-gray-200 bg-white p-0 font-bold text-gray-500 shadow-[0_4px_0_0_#e5e7eb] transition-all hover:bg-gray-50 hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] sm:h-auto sm:w-auto sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
-            <span aria-hidden="true" class="group-hover:rotate-12 transition-transform">🏠</span>
+            <span aria-hidden="true" class="motion-wiggle">🏠</span>
             <span class="sr-only sm:not-sr-only">หน้าแรก</span>
           </NuxtLink>
         </div>
@@ -119,9 +120,13 @@
           </div>
 
           <div v-if="isDetecting" class="flex min-h-56 flex-col items-center justify-center rounded-2xl border border-pink-100 bg-white p-6 text-center" role="status" aria-live="polite">
-            <span class="mb-3 animate-pulse text-4xl" aria-hidden="true">🔎</span>
+            <span class="motion-pulse mb-3 text-4xl" aria-hidden="true">🔎</span>
             <p class="font-bold text-gray-800">กำลังตรวจวัตถุดิบ</p>
             <p class="mt-2 text-sm text-gray-500">กำลังประมวลผลรูป {{ detectingProgress }} จาก {{ images.length }}</p>
+            <div class="mt-5 w-full max-w-sm animate-pulse space-y-3" aria-hidden="true">
+              <div class="h-3 w-2/3 rounded-full bg-pink-100"></div>
+              <div class="flex gap-2"><div class="h-7 w-24 rounded-full bg-pink-100"></div><div class="h-7 w-28 rounded-full bg-pink-50"></div><div class="h-7 w-20 rounded-full bg-pink-100"></div></div>
+            </div>
             <div class="mt-4 h-2 w-full max-w-xs overflow-hidden rounded-full bg-pink-100">
               <div class="h-full rounded-full bg-pink-500 transition-all" :style="{ width: `${(detectingProgress / images.length) * 100}%` }"></div>
             </div>
@@ -188,6 +193,14 @@ type ImageItem = { id: string; file: File; preview: string; detections: Detectio
 const router = useRouter()
 const route = useRoute()
 const { notify } = useAppToast()
+const showConfetti = ref(false)
+let confettiTimeout: ReturnType<typeof setTimeout> | undefined
+const celebrate = () => {
+  showConfetti.value = false
+  requestAnimationFrame(() => { showConfetti.value = true })
+  if (confettiTimeout) clearTimeout(confettiTimeout)
+  confettiTimeout = setTimeout(() => { showConfetti.value = false; confettiTimeout = undefined }, 1500)
+}
 const selectedCategory = String(route.query.category || '')
 const selectedMethod = String(route.query.method || '')
 const detectableIngredients = [
@@ -274,6 +287,7 @@ const analyzeImages = async () => {
       image.detections = response.detections
     }
     hasDetected.value = true
+    if (allDetections.value.length) celebrate()
   } catch (error: any) { notify(error?.data?.message || 'ตรวจสอบรูปไม่สำเร็จ ลองอีกครั้งนะ', 'error') } finally { isDetecting.value = false }
 }
 const findMenus = async () => {
@@ -287,5 +301,9 @@ const findMenus = async () => {
     } else notify('ยังไม่พบเมนูที่ตรงกับวัตถุดิบและตัวเลือกนี้ ลองเปลี่ยนวิธีทำหรือถ่ายรูปเพิ่มนะ', 'info')
   } catch { notify('ค้นหาเมนูไม่สำเร็จ ลองอีกครั้งนะ', 'error') } finally { isMatching.value = false }
 }
-onBeforeUnmount(() => { stopCamera(); images.value.forEach(image => URL.revokeObjectURL(image.preview)) })
+onBeforeUnmount(() => {
+  stopCamera()
+  images.value.forEach(image => URL.revokeObjectURL(image.preview))
+  if (confettiTimeout) clearTimeout(confettiTimeout)
+})
 </script>

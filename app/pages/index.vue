@@ -13,7 +13,7 @@
       
       <!-- ไอคอนเชฟในวงกลม -->
       <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-pink-100 shadow-inner sm:mb-6 sm:h-24 sm:w-24">
-        <span class="text-4xl animate-pulse sm:text-5xl">👩🏻‍🍳</span>
+        <span class="motion-pulse text-4xl sm:text-5xl">👩🏻‍🍳</span>
       </div>
 
       <!-- หัวข้อ -->
