@@ -1,6 +1,6 @@
 <template>
   <!-- พื้นหลังสีชมพูอ่อน พร้อมป้องกันไม่ให้ของลอยๆ ล้นจอ (overflow-hidden) -->
-  <div class="relative min-h-screen bg-pink-50 flex flex-col items-center justify-center p-6 overflow-hidden">
+  <div class="relative min-h-[calc(100dvh-4rem)] bg-pink-50 flex flex-col items-center justify-center p-4 overflow-hidden sm:min-h-[calc(100dvh-4.5rem)] sm:p-6">
     
     <!-- ของตกแต่งลอยๆ พื้นหลัง (Fun element) -->
     <div class="absolute top-16 left-10 md:left-32 text-4xl animate-[bounce_4s_infinite_alternate] opacity-60">🍳</div>
@@ -9,15 +9,15 @@
     <div class="absolute bottom-24 right-16 md:right-40 text-4xl animate-[bounce_3s_infinite_alternate-reverse] opacity-60">🍙</div>
 
     <!-- กล่องเนื้อหาหลัก (Minimal & Clean) -->
-    <div class="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-10 text-center shadow-sm border-2 border-white transition-transform duration-500 hover:scale-[1.02]">
+    <div class="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-xl rounded-[2rem] p-6 text-center shadow-sm border-2 border-white transition-transform duration-500 sm:rounded-[2.5rem] sm:p-10 sm:hover:scale-[1.02]">
       
       <!-- ไอคอนเชฟในวงกลม -->
-      <div class="mx-auto w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center mb-6 shadow-inner border-4 border-white">
-        <span class="text-5xl animate-pulse">👩🏻‍🍳</span>
+      <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-pink-100 shadow-inner sm:mb-6 sm:h-24 sm:w-24">
+        <span class="text-4xl animate-pulse sm:text-5xl">👩🏻‍🍳</span>
       </div>
 
       <!-- หัวข้อ -->
-      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2 tracking-tight">
+      <h1 class="mb-2 text-3xl font-extrabold tracking-tight text-gray-800 sm:text-4xl md:text-5xl">
         today eat
         <br/>
         <span class="text-pink-500 inline-block mt-2 relative">
@@ -30,7 +30,7 @@
       </h1>
 
       <!-- รายละเอียดแบบกระชับ -->
-      <p class="text-gray-500 mb-10 leading-relaxed font-medium mt-6">
+      <p class="mt-5 mb-8 leading-relaxed font-medium text-gray-500 sm:mt-6 sm:mb-10">
         เปิดตู้เย็นแล้วคิดไม่ออก? <br/>
         ให้พวกเราช่วยเสกเมนูอร่อยจากของที่มีสิ! ✨
       </p>
@@ -38,7 +38,7 @@
       <!-- ปุ่ม 3D กดแล้วยุบตัว (Cute & Fun interaction) -->
       <NuxtLink 
         to="/category" 
-        class="group w-full inline-flex items-center justify-center bg-pink-400 text-white font-bold text-xl py-4 px-8 rounded-2xl shadow-[0_6px_0_0_#be185d] transition-all hover:bg-pink-500 hover:shadow-[0_2px_0_0_#be185d] hover:translate-y-[4px] active:scale-95"
+        class="group inline-flex w-full items-center justify-center rounded-2xl bg-pink-400 px-4 py-4 text-lg font-bold text-white shadow-[0_6px_0_0_#be185d] transition-all hover:bg-pink-500 hover:shadow-[0_2px_0_0_#be185d] hover:translate-y-[4px] active:scale-95 sm:px-8 sm:text-xl"
       >
         <span class="group-hover:animate-bounce mr-2 transition-all"></span> ไปกันเลย !
       </NuxtLink>

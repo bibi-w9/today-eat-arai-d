@@ -1,8 +1,15 @@
 <template>
-  <main class="flex min-h-[calc(100vh-5rem)] items-center justify-center bg-pink-50 px-4 py-10">
+  <main class="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-pink-50 px-4 py-8 sm:min-h-[calc(100dvh-4.5rem)] sm:py-10">
     <section
-      class="w-full max-w-md rounded-[2.5rem] border-2 border-white bg-white/90 p-8 text-center shadow-sm sm:p-10"
+      class="w-full max-w-md rounded-[2rem] border-2 border-white bg-white/90 p-6 text-center shadow-sm sm:rounded-[2.5rem] sm:p-10"
     >
+      <div class="mb-5 flex justify-end">
+        <NuxtLink to="/" aria-label="หน้าแรก"
+          class="group inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-gray-200 bg-white p-0 font-bold text-gray-500 shadow-[0_4px_0_0_#e5e7eb] transition-all hover:bg-gray-50 sm:h-auto sm:w-auto sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
+          <span aria-hidden="true" class="group-hover:rotate-12 transition-transform">🏠</span>
+          <span class="sr-only sm:not-sr-only">หน้าแรก</span>
+        </NuxtLink>
+      </div>
       <div
         class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-pink-100 text-4xl"
         aria-hidden="true"
@@ -27,12 +34,6 @@
         {{ isSigningIn ? 'กำลังไปยัง Google…' : 'เข้าสู่ระบบด้วย Google' }}
       </button>
 
-      <NuxtLink
-        to="/"
-        class="mt-6 inline-block font-bold text-gray-400 transition hover:text-pink-500"
-      >
-        กลับหน้าแรก
-      </NuxtLink>
     </section>
   </main>
 </template>

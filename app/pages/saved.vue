@@ -1,5 +1,5 @@
 <template>
-  <div class="relative min-h-screen bg-pink-50 flex flex-col items-center py-10 px-4 overflow-hidden">
+  <div class="relative min-h-[calc(100dvh-4rem)] bg-pink-50 flex flex-col items-center py-5 px-3 overflow-hidden sm:min-h-[calc(100dvh-4.5rem)] sm:px-4 sm:py-8">
 
     <!-- ของตกแต่งลอยๆ พื้นหลัง -->
     <div class="absolute top-10 left-4 md:left-20 text-4xl animate-[bounce_4s_infinite_alternate] opacity-40">✨</div>
@@ -12,15 +12,20 @@
       class="absolute bottom-32 right-8 md:right-32 text-4xl animate-[bounce_3s_infinite_alternate-reverse] opacity-40">
       📖</div>
 
-    <!-- ปุ่มย้อนกลับ -->
-    <div class="fixed top-6 left-6 z-50">
-      <button @click="router.back()"
-        class="group inline-flex items-center gap-2 font-bold text-pink-500 bg-white/90 backdrop-blur-sm border-2 border-pink-200 px-5 py-2.5 rounded-2xl shadow-[0_4px_0_0_#fbcfe8] hover:bg-pink-50 hover:translate-y-[2px] hover:shadow-[0_2px_0_0_#f9a8d4] active:shadow-none active:translate-y-[4px] transition-all">
-        <span class="group-hover:-translate-x-1 transition-transform text-lg">◀</span> ย้อนกลับ
-      </button>
-    </div>
-    <!-- Container หลัก -->
-    <div class="relative z-10 w-full max-w-6xl mt-16 sm:mt-12">
+    <div class="relative z-10 w-full max-w-6xl">
+      <!-- ปุ่มกลับและหน้าแรก -->
+      <div class="mb-6 flex items-center justify-between">
+        <button @click="router.back()" aria-label="ย้อนกลับ"
+          class="group inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-pink-200 bg-white/90 p-0 text-sm font-bold text-pink-500 shadow-[0_4px_0_0_#fbcfe8] backdrop-blur-sm transition-all hover:bg-pink-50 hover:translate-y-[2px] hover:shadow-[0_2px_0_0_#f9a8d4] active:shadow-none active:translate-y-[4px] sm:h-auto sm:w-auto sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
+          <span aria-hidden="true" class="group-hover:-translate-x-1 transition-transform sm:text-lg">◀</span>
+          <span class="sr-only sm:not-sr-only">ย้อนกลับ</span>
+        </button>
+        <NuxtLink to="/" aria-label="หน้าแรก"
+          class="group inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-gray-200 bg-white p-0 font-bold text-gray-500 shadow-[0_4px_0_0_#e5e7eb] transition-all hover:bg-gray-50 hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] sm:h-auto sm:w-auto sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
+          <span aria-hidden="true" class="group-hover:rotate-12 transition-transform">🏠</span>
+          <span class="sr-only sm:not-sr-only">หน้าแรก</span>
+        </NuxtLink>
+      </div>
 
       <!-- หัวข้อหน้าสมุดจดเมนู -->
       <div class="text-center mb-10">
@@ -36,13 +41,13 @@
 
       <!-- ================= กรณียังไม่ได้เข้าสู่ระบบ ================= -->
       <div v-if="status === 'unauthenticated'"
-        class="flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl rounded-[3rem] p-10 md:p-16 shadow-sm border-2 border-red-400 max-w-2xl mx-auto mt-10 text-center">
+        class="mx-auto mt-8 flex max-w-2xl flex-col items-center justify-center rounded-[2rem] border-2 border-red-400 bg-white/80 p-6 text-center shadow-sm backdrop-blur-xl sm:mt-10 sm:rounded-[3rem] sm:p-10 md:p-16">
         <div class="text-7xl mb-6">🔒</div>
-        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-4">กรุณาเข้าสู่ระบบก่อนนะ</h2>
-        <p class="text-gray-500 font-medium mb-8 text-lg">เข้าสู่ระบบด้วยบัญชี Google ของคุณ
+        <h2 class="mb-4 text-xl font-extrabold text-gray-800 sm:text-2xl md:text-3xl">กรุณาเข้าสู่ระบบก่อนนะ</h2>
+        <p class="mb-8 text-base font-medium text-gray-500 sm:text-lg">เข้าสู่ระบบด้วยบัญชี Google ของคุณ
           เพื่อดู<br>และเก็บเมนูโปรดของคุณไว้ในสมุดจด</p>
         <button @click="goToLogin"
-          class="inline-flex items-center justify-center font-bold text-xl py-4 px-10 rounded-[1.5rem] bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:translate-y-[2px] transition-all">
+          class="inline-flex items-center justify-center rounded-[1.5rem] bg-pink-500 px-6 py-4 text-lg font-bold text-white shadow-[0_6px_0_0_#9d174d] transition-all hover:bg-pink-600 hover:translate-y-[2px] sm:px-10 sm:text-xl">
           👤 ไปเข้าสู่ระบบ
         </button>
       </div>
@@ -53,12 +58,12 @@
 
         <!-- การ์ดเมนูแต่ละอัน -->
         <div v-for="(recipe, index) in savedRecipes" :key="recipe.savedId || index"
-          class="bg-white/90 backdrop-blur-xl rounded-[2rem] p-5 shadow-sm border-2 border-white hover:shadow-md hover:border-pink-200 transition-all duration-300 relative group flex flex-col">
+          class="group relative flex flex-col rounded-[1.5rem] border-2 border-white bg-white/90 p-4 shadow-sm backdrop-blur-xl transition-all duration-300 hover:border-pink-200 hover:shadow-md sm:rounded-[2rem] sm:p-5">
 
           <!-- ปุ่มลบเมนู (ถังขยะ) -->
           <button @click="openDeleteModal(recipe)"
             :aria-label="`ลบเมนู ${recipe.name}`"
-            class="absolute top-7 right-7 z-20 w-10 h-10 bg-white/90 backdrop-blur-sm text-red-400 rounded-full flex items-center justify-center text-lg font-bold border-2 border-red-100 shadow-sm opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 hover:bg-red-50 hover:text-red-500 transition-all active:scale-90">
+            class="absolute right-6 top-6 z-20 flex h-10 w-10 items-center justify-center rounded-full border-2 border-red-100 bg-white/95 text-lg font-bold text-red-400 shadow-sm transition-all hover:bg-red-50 hover:text-red-500 active:scale-90 sm:right-7 sm:top-7 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
             🗑️
           </button>
 
@@ -94,13 +99,13 @@
 
       <!-- ================= กรณีไม่มีเมนู (Empty State) ================= -->
       <div v-else-if="status === 'authenticated'"
-        class="flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl rounded-[3rem] p-10 md:p-16 shadow-sm border-2 border-white max-w-2xl mx-auto mt-10 text-center">
+        class="mx-auto mt-8 flex max-w-2xl flex-col items-center justify-center rounded-[2rem] border-2 border-white bg-white/80 p-6 text-center shadow-sm backdrop-blur-xl sm:mt-10 sm:rounded-[3rem] sm:p-10 md:p-16">
         <div class="text-7xl mb-6 animate-[bounce_2s_infinite]">🥺</div>
-        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-4">สมุดจดยังว่างเปล่าเลย!</h2>
-        <p class="text-gray-500 font-medium mb-8 text-lg">คุณยังไม่ได้บันทึกเมนูไหนไว้เลย ลองค้นหาเมนูอร่อยๆ
+        <h2 class="mb-4 text-xl font-extrabold text-gray-800 sm:text-2xl md:text-3xl">สมุดจดยังว่างเปล่าเลย!</h2>
+        <p class="mb-8 text-base font-medium text-gray-500 sm:text-lg">คุณยังไม่ได้บันทึกเมนูไหนไว้เลย ลองค้นหาเมนูอร่อยๆ
           จากของในตู้เย็นดูไหม?</p>
         <button @click="router.push('/upload')"
-          class="group inline-flex items-center justify-center font-bold text-xl py-4 px-10 rounded-[1.5rem] transition-all duration-200 bg-pink-500 text-white shadow-[0_6px_0_0_#9d174d] hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px]">
+          class="group inline-flex items-center justify-center rounded-[1.5rem] bg-pink-500 px-6 py-4 text-lg font-bold text-white shadow-[0_6px_0_0_#9d174d] transition-all duration-200 hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px] sm:px-10 sm:text-xl">
           <span class="mr-2 group-hover:scale-125 transition-transform duration-300">✨</span> ไปเสกเมนูกันเลย!
         </button>
       </div>
@@ -117,9 +122,9 @@
           aria-labelledby="delete-modal-title"
           @click.self="closeDeleteModal"
         >
-          <section class="w-full max-w-sm rounded-[2rem] border-2 border-pink-100 bg-white p-7 text-center shadow-2xl">
+          <section class="w-full max-w-sm rounded-[1.5rem] border-2 border-pink-100 bg-white p-5 text-center shadow-2xl sm:rounded-[2rem] sm:p-7">
             <div class="mb-4 text-6xl" aria-hidden="true">🥺</div>
-            <h2 id="delete-modal-title" class="text-2xl font-extrabold text-gray-800">
+            <h2 id="delete-modal-title" class="text-xl font-extrabold text-gray-800 sm:text-2xl">
               ลบเมนูนี้ไหมนะ?
             </h2>
             <p class="mt-2 text-gray-500">
@@ -130,11 +135,11 @@
               {{ deleteError }}
             </p>
 
-            <div class="mt-6 flex justify-center gap-3">
+            <div class="mt-6 flex justify-center gap-2 sm:gap-3">
               <button
                 type="button"
                 :disabled="isDeleting"
-                class="rounded-xl border-2 border-pink-200 bg-white px-5 py-2.5 font-bold text-pink-500 transition hover:bg-pink-50 disabled:opacity-60"
+                class="flex-1 rounded-xl border-2 border-pink-200 bg-white px-3 py-2.5 text-sm font-bold text-pink-500 transition hover:bg-pink-50 disabled:opacity-60 sm:flex-none sm:px-5 sm:text-base"
                 @click="closeDeleteModal"
               >
                 ยกเลิก
@@ -142,7 +147,7 @@
               <button
                 type="button"
                 :disabled="isDeleting"
-                class="rounded-xl bg-pink-500 px-5 py-2.5 font-bold text-white shadow-[0_4px_0_0_#be185d] transition hover:bg-pink-600 disabled:cursor-wait disabled:opacity-60"
+                class="flex-1 rounded-xl bg-pink-500 px-3 py-2.5 text-sm font-bold text-white shadow-[0_4px_0_0_#be185d] transition hover:bg-pink-600 disabled:cursor-wait disabled:opacity-60 sm:flex-none sm:px-5 sm:text-base"
                 @click="confirmDeleteRecipe"
               >
                 {{ isDeleting ? 'กำลังลบ...' : 'ลบเมนู' }}
