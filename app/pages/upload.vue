@@ -21,6 +21,10 @@
       <header class="mb-8 text-left">
         <h1 class="text-2xl font-extrabold leading-tight text-gray-800 sm:text-3xl">เพิ่มรูปวัตถุดิบ</h1>
         <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">ถ่ายรูปหรือเลือกภาพจากอุปกรณ์ได้หลายรูป จากนั้นให้ระบบตรวจวัตถุดิบและแนะนำเมนูให้</p>
+        <div class="mt-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3.5 text-sm text-blue-900 sm:px-5">
+          <p class="font-extrabold">💡เคล็ดลับเพื่อให้ตรวจจับได้แม่นยำขึ้น</p>
+          <p class="mt-1 leading-6">✅ถ่ายภาพบนพื้นหลังสีขาวหรือสีอ่อน ✅วางวัตถุดิบให้ห่างจากกันพอสมควร ✅เลือกบริเวณที่มีแสงสว่างพอดี ไม่มืดหรือสว่างจ้าจนเกินไป</p>
+        </div>
       </header>
 
       <div class="grid gap-5 lg:grid-cols-2 lg:gap-7">
@@ -147,11 +151,31 @@
                   </label>
                 </div>
               </div>
-              <div v-else class="mt-4 flex flex-wrap gap-2">
-                <span v-for="(detection, index) in allDetections" :key="index"
-                  class="rounded-full border border-pink-200 bg-pink-50 px-3 py-1.5 text-sm font-bold text-pink-700">
-                  {{ detection.label }} · {{ detection.confidence.toFixed(1) }}%
-                </span>
+              <div v-else class="mt-4 space-y-3">
+                <div v-for="group in detectionGroups" :key="group.imageIndex"
+                  class="overflow-hidden rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-50 via-white to-white shadow-sm">
+                  <div class="flex items-center gap-3 border-b border-pink-100/80 px-4 py-3">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-pink-500 text-sm font-extrabold text-white shadow-sm">
+                      {{ group.imageIndex + 1 }}
+                    </span>
+                    <div>
+                      <p class="font-extrabold text-gray-800">รูปที่ {{ group.imageIndex + 1 }}</p>
+                      <p class="text-xs text-gray-500">พบวัตถุดิบ {{ group.detections.length }} รายการ</p>
+                    </div>
+                  </div>
+                  <div class="grid gap-2 p-3 sm:grid-cols-2">
+                    <div v-for="(detection, index) in group.detections" :key="`${group.imageIndex}-${index}`"
+                      class="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-pink-100 bg-white px-3 py-2">
+                      <span class="flex min-w-0 items-center gap-2 text-sm font-bold text-pink-800">
+                        <span class="text-xs text-pink-400" aria-hidden="true">●</span>
+                        <span class="truncate">{{ detection.label }}</span>
+                      </span>
+                      <span class="shrink-0 rounded-full bg-pink-100 px-2 py-1 text-xs font-extrabold text-pink-700">
+                        {{ detection.confidence.toFixed(1) }}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <button v-if="allDetections.length" @click="findMenus" :disabled="isMatching"
@@ -165,6 +189,14 @@
             <p class="mt-2 max-w-sm text-sm leading-6 text-gray-500">
               {{ images.length ? 'กดปุ่ม “ตรวจวัตถุดิบ” เพื่อดูรายการวัตถุดิบที่พบ' : 'เมื่อเพิ่มรูปแล้ว ผลการตรวจสอบจะแสดงตรงนี้' }}
             </p>
+          </div>
+
+          <div class="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-950 sm:p-5">
+            <p class="font-extrabold">🚨หมายเหตุ🚨</p>
+            <p class="mt-1 text-sm leading-6">หากระบบไม่สามารถตรวจจับได้หรือระบุวัตถุดิบคลาดเคลื่อน</p>
+            <p class="mt-1 text-sm leading-6">1️⃣ลองถ่ายให้ใกล้ขึ้น ภาพคมชัดขึ้น</p>
+            <p class="mt-1 text-sm leading-6">2️⃣ถ่ายวัตถุดิบทีละอย่าง</p>
+            <p class="mt-1 text-sm leading-6">3️⃣หลีกเลี่ยงเงาและสิ่งของอื่นที่บังภาพ</p>
           </div>
 
           <div class="mt-5 border-t border-pink-100 pt-4" aria-label="คลาสวัตถุดิบที่โมเดลตรวจจับได้">
@@ -222,7 +254,10 @@ const matchedRecipesState = useState<any[]>('matchedRecipes', () => [])
 let videoStream: MediaStream | null = null
 
 const selectedImage = computed(() => images.value[selectedIndex.value] || null)
-const allDetections = computed(() => images.value.flatMap(image => image.detections))
+const allDetections = computed(() => images.value.flatMap((image, imageIndex) => image.detections.map(detection => ({ ...detection, imageIndex }))))
+const detectionGroups = computed(() => images.value
+  .map((image, imageIndex) => ({ imageIndex, detections: image.detections }))
+  .filter(group => group.detections.length > 0))
 const previewStyle = computed(() => {
   const ratio = imageSize.value.width / imageSize.value.height
   return { width: `min(100%, calc(32rem * ${ratio}))`, aspectRatio: `${imageSize.value.width} / ${imageSize.value.height}` }

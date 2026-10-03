@@ -7,10 +7,10 @@ const IMAGE_SIZE = 640
 const CONFIDENCE_THRESHOLD = 0.25
 const IOU_THRESHOLD = 0.45
 
-// ลำดับคลาสนี้มาจาก metadata ในไฟล์ best.pt ที่ส่งมาพร้อมโมเดล
-const CLASS_NAMES: Array<string | null> = [
-  'เห็ดออริจิ', 'แครอท', 'ไก่', 'ไข่', 'บะหมี่กึ่งสำเร็จรูป',
-  'หอมใหญ่', 'หมู', 'ข้าว', 'กุ้ง', 'กะเพรา', 'มะเขือเทศ', null, 'ผักบุ้ง'
+// ลำดับคลาสนี้อ่านจาก metadata ของ best (6).onnx
+const CLASS_NAMES = [
+  'แครอท', 'ไก่', 'ไข่', 'บะหมี่กึ่งสำเร็จรูป', 'เห็ดออริจิ', 'หอมใหญ่',
+  'หมู', 'ข้าว', 'กุ้ง', 'กะเพรา', 'มะเขือเทศ', 'ผักบุ้ง'
 ]
 
 export interface IngredientDetection {
@@ -53,7 +53,18 @@ export async function detectIngredients(image: Buffer): Promise<IngredientDetect
   const originalHeight = metadata.height
   if (!originalWidth || !originalHeight) throw createError({ statusCode: 400, message: 'ไฟล์นี้ไม่ใช่รูปภาพที่ใช้ตรวจจับได้' })
 
-  const pixels = await source.resize(IMAGE_SIZE, IMAGE_SIZE, { fit: 'fill' }).removeAlpha().raw().toBuffer()
+  // Keep the original aspect ratio while preparing the square tensor expected by YOLO.
+  // The model sees gray padding instead of a geometrically distorted image.
+  const scale = Math.min(IMAGE_SIZE / originalWidth, IMAGE_SIZE / originalHeight)
+  const resizedWidth = Math.max(1, Math.round(originalWidth * scale))
+  const resizedHeight = Math.max(1, Math.round(originalHeight * scale))
+  const padX = (IMAGE_SIZE - resizedWidth) / 2
+  const padY = (IMAGE_SIZE - resizedHeight) / 2
+  const pixels = await source.resize(IMAGE_SIZE, IMAGE_SIZE, {
+    fit: 'contain',
+    position: 'centre',
+    background: { r: 114, g: 114, b: 114, alpha: 1 }
+  }).removeAlpha().raw().toBuffer()
   const input = new Float32Array(3 * IMAGE_SIZE * IMAGE_SIZE)
   for (let pixel = 0; pixel < IMAGE_SIZE * IMAGE_SIZE; pixel++) {
     input[pixel] = pixels[pixel * 3] / 255
@@ -62,16 +73,40 @@ export async function detectIngredients(image: Buffer): Promise<IngredientDetect
   }
 
   const session = await getSession()
-  const output = (await session.run({ images: new ort.Tensor('float32', input, [1, 3, IMAGE_SIZE, IMAGE_SIZE]) })).output0.data as Float32Array
+  const inputName = session.inputNames[0]
+  const outputName = session.outputNames[0]
+  const results = await session.run({
+    [inputName]: new ort.Tensor('float32', input, [1, 3, IMAGE_SIZE, IMAGE_SIZE])
+  })
+  const outputTensor = results[outputName]
+  const output = outputTensor.data as Float32Array
   const candidates: IngredientDetection[] = []
-  const predictions = 8400
-  const attributes = 17 // x, y, width, height + ความน่าจะเป็นของ 13? export นี้มี 9 คลาสที่ใช้
+  const outputDims = outputTensor.dims
+  if (outputDims.length !== 3 || outputDims[0] !== 1) {
+    throw createError({ statusCode: 500, message: 'รูปแบบผลลัพธ์ของโมเดลไม่รองรับ' })
+  }
+
+  // Ultralytics exports detection output as [1, attributes, predictions].
+  // รองรับ [1, predictions, attributes] ไว้ด้วยเพื่อไม่ผูกกับ exporter รุ่นใดรุ่นหนึ่ง
+  const channelFirst = Number(outputDims[1]) <= Number(outputDims[2])
+  const attributes = Number(outputDims[channelFirst ? 1 : 2])
+  const predictions = Number(outputDims[channelFirst ? 2 : 1])
+  const classCount = attributes - 4
+  if (classCount !== CLASS_NAMES.length) {
+    throw createError({ statusCode: 500, message: 'จำนวนคลาสในโมเดลไม่ตรงกับการตั้งค่าในระบบ' })
+  }
+
+  const valueAt = (attribute: number, prediction: number) => (
+    channelFirst
+      ? output[attribute * predictions + prediction]
+      : output[prediction * attributes + attribute]
+  )
 
   for (let index = 0; index < predictions; index++) {
     let classIndex = -1
     let confidence = 0
     for (let classOffset = 4; classOffset < attributes; classOffset++) {
-      const score = output[classOffset * predictions + index]
+      const score = valueAt(classOffset, index)
       if (score > confidence) {
         confidence = score
         classIndex = classOffset - 4
@@ -80,19 +115,23 @@ export async function detectIngredients(image: Buffer): Promise<IngredientDetect
     const label = CLASS_NAMES[classIndex]
     if (confidence < CONFIDENCE_THRESHOLD || !label) continue
 
-    const centerX = output[index]
-    const centerY = output[predictions + index]
-    const width = output[predictions * 2 + index]
-    const height = output[predictions * 3 + index]
-    const x = Math.max(0, (centerX - width / 2) * originalWidth / IMAGE_SIZE)
-    const y = Math.max(0, (centerY - height / 2) * originalHeight / IMAGE_SIZE)
+    const centerX = valueAt(0, index)
+    const centerY = valueAt(1, index)
+    const width = valueAt(2, index)
+    const height = valueAt(3, index)
+    const left = (centerX - width / 2 - padX) / scale
+    const top = (centerY - height / 2 - padY) / scale
+    const right = (centerX + width / 2 - padX) / scale
+    const bottom = (centerY + height / 2 - padY) / scale
+    const x = Math.max(0, Math.min(originalWidth, left))
+    const y = Math.max(0, Math.min(originalHeight, top))
     candidates.push({
       label,
       confidence: Math.round(confidence * 1000) / 10,
       box: {
         x: Math.round(x), y: Math.round(y),
-        width: Math.round(Math.min(width * originalWidth / IMAGE_SIZE, originalWidth - x)),
-        height: Math.round(Math.min(height * originalHeight / IMAGE_SIZE, originalHeight - y))
+        width: Math.round(Math.max(0, Math.min(originalWidth - x, right - x))),
+        height: Math.round(Math.max(0, Math.min(originalHeight - y, bottom - y)))
       }
     })
   }
