@@ -178,7 +178,7 @@
                     :class="resultImageIndex === group.imageIndex ? 'border-pink-400 bg-pink-50 shadow-md shadow-pink-100' : 'border-white bg-white shadow-sm hover:border-pink-200'"
                     :aria-pressed="resultImageIndex === group.imageIndex" :aria-label="`ดูผลตรวจรูปที่ ${group.imageIndex + 1}`">
                     <span class="relative block h-14 w-full overflow-hidden rounded-xl bg-pink-100 ring-2 ring-white sm:h-16">
-                      <img :src="images[group.imageIndex].preview" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" :alt="`ภาพวัตถุดิบที่ ${group.imageIndex + 1}`" />
+                      <img :src="group.image.preview" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" :alt="`ภาพวัตถุดิบที่ ${group.imageIndex + 1}`" />
                       <span class="absolute right-1 top-1 rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-extrabold text-pink-700 shadow-sm">
                         {{ group.detections.length }} รายการ
                       </span>
@@ -308,7 +308,7 @@ let videoStream: MediaStream | null = null
 const selectedImage = computed(() => images.value[selectedIndex.value] || null)
 const allDetections = computed(() => images.value.flatMap((image, imageIndex) => image.detections.map(detection => ({ ...detection, imageIndex }))))
 const detectionGroups = computed(() => images.value
-  .map((image, imageIndex) => ({ imageIndex, detections: image.detections })))
+  .map((image, imageIndex) => ({ image, imageIndex, detections: image.detections })))
 const activeDetectionGroup = computed(() => detectionGroups.value[resultImageIndex.value] || detectionGroups.value[0] || null)
 const previewStyle = computed(() => {
   const ratio = imageSize.value.width / imageSize.value.height
