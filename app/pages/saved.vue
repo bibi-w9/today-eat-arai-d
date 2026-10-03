@@ -67,7 +67,7 @@
           <!-- ปุ่มลบเมนู (ถังขยะ) -->
           <button @click="openDeleteModal(recipe)"
             :aria-label="`ลบเมนู ${recipe.name}`"
-            class="absolute right-6 top-6 z-20 flex h-10 w-10 items-center justify-center rounded-full border-2 border-red-100 bg-white/95 text-lg font-bold text-red-400 shadow-sm transition-all hover:bg-red-50 hover:text-red-500 active:scale-90 sm:right-7 sm:top-7 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+            class="absolute right-6 top-6 z-20 flex h-10 w-10 items-center justify-center rounded-full border-2 border-red-100 bg-white/95 text-lg font-bold text-red-400 shadow-sm transition-all hover:bg-red-50 hover:text-red-500 active:scale-90 sm:right-7 sm:top-7">
             🗑️
           </button>
 
