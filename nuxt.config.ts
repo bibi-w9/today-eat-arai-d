@@ -42,11 +42,11 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    roboflowApiKey: process.env.ROBOFLOW_API_KEY,
+    roboflowApiKey: '',
     roboflowModel: 'your-fridge-model',
     roboflowVersion: '1',
-    mongodbUri: process.env.MONGODB_URI,
-    cloudinaryUrl: process.env.CLOUDINARY_URL
+    mongodbUri: '',
+    cloudinaryUrl: ''
 },
   // รวมการตั้งค่า Vite สำหรับทำ Polling บน Docker ไว้ที่นี่ที่เดียว
   vite: {
