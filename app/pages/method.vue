@@ -17,7 +17,7 @@
         </button>
         <NuxtLink to="/" aria-label="หน้าแรก"
           class="group inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-gray-200 bg-white p-0 font-bold text-gray-500 shadow-[0_4px_0_0_#e5e7eb] transition-all hover:bg-gray-50 hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] sm:h-auto sm:w-auto sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
-          <span aria-hidden="true" class="group-hover:rotate-12 transition-transform">🏠</span>
+          <span aria-hidden="true" class="motion-wiggle">🏠</span>
           <span class="sr-only sm:not-sr-only">หน้าแรก</span>
         </NuxtLink>
       </div>
@@ -36,7 +36,7 @@
           class="group flex flex-col items-center justify-center rounded-3xl border-4 p-3 transition-all duration-300 sm:p-5"
           :class="selectedMethod === method.id ? 'bg-pink-50 border-pink-400 text-pink-600 shadow-md md:scale-105' : 'bg-white border-pink-100 text-gray-400 hover:bg-pink-50 hover:border-pink-200 md:hover:-translate-y-1'"
         >
-          <span class="mb-2 text-3xl transition-transform group-hover:scale-110 sm:mb-3 sm:text-4xl">{{ method.icon }}</span>
+          <span class="motion-bounce mb-2 text-3xl sm:mb-3 sm:text-4xl">{{ method.icon }}</span>
           <span class="text-center text-sm font-bold sm:text-lg" :class="selectedMethod === method.id ? 'text-pink-600' : 'text-gray-600'">{{ method.label }}</span>
         </button>
       </div>
@@ -49,7 +49,7 @@
         :class="selectedMethod ? 'bg-pink-400 text-white shadow-[0_6px_0_0_#be185d] hover:bg-pink-500 hover:shadow-[0_2px_0_0_#be185d] hover:translate-y-[4px] active:scale-95' : 'bg-gray-200 text-gray-400 shadow-[0_6px_0_0_#d1d5db]'"
       >
          ต่อไป (อัปโหลดรูปวัตถุดิบ) 👀
-        <span class="group-hover:translate-x-2 transition-transform duration-300 ease-in-out ml-2">➭</span>
+        <span class="motion-bounce ml-2">➭</span>
       </button>
 
     </div>

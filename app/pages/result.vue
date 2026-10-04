@@ -1,5 +1,6 @@
 <template>
   <div class="relative min-h-[calc(100dvh-4rem)] bg-pink-50 flex flex-col items-center py-5 px-3 overflow-hidden sm:min-h-[calc(100dvh-4.5rem)] sm:px-4 sm:py-8">
+    <ConfettiEffect :show="showConfetti" />
 
     <!-- ของตกแต่งลอยๆ พื้นหลัง -->
     <div class="absolute top-10 left-4 md:left-20 text-4xl animate-[bounce_4s_infinite_alternate] opacity-50">✨</div>
@@ -20,7 +21,7 @@
         </button>
         <NuxtLink to="/" aria-label="หน้าแรก"
           class="group inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-gray-200 bg-white p-0 font-bold text-gray-500 shadow-[0_4px_0_0_#e5e7eb] transition-all hover:bg-gray-50 hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] sm:h-auto sm:w-auto sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
-          <span aria-hidden="true" class="group-hover:rotate-12 transition-transform">🏠</span>
+          <span aria-hidden="true" class="motion-wiggle">🏠</span>
           <span class="sr-only sm:not-sr-only">หน้าแรก</span>
         </NuxtLink>
       </div>
@@ -147,11 +148,11 @@
         <div class="flex flex-col md:flex-row justify-center gap-4 max-w-2xl mx-auto">
           <button v-if="!fromSaved" @click="saveRecipe"
             class="group inline-flex flex-1 items-center justify-center rounded-2xl bg-pink-500 px-4 py-3.5 text-base font-bold text-white shadow-[0_6px_0_0_#9d174d] transition-all duration-200 hover:bg-pink-600 hover:shadow-[0_4px_0_0_#9d174d] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px] sm:rounded-[1.5rem] sm:px-8 sm:py-4 sm:text-xl">
-            <span class="mr-2 group-hover:scale-110 transition-transform">🍽️</span> บันทึกเมนูนี้
+            <span class="motion-bounce mr-2">🍽️</span> บันทึกเมนูนี้
           </button>
           <button @click="router.push('/upload')"
             class="group inline-flex flex-1 items-center justify-center rounded-2xl border-2 border-pink-200 bg-white px-4 py-3.5 text-base font-bold text-pink-500 shadow-[0_6px_0_0_#fbcfe8] transition-all duration-200 hover:border-pink-300 hover:bg-pink-50 hover:shadow-[0_4px_0_0_#f9a8d4] hover:translate-y-[2px] active:shadow-none active:translate-y-[6px] sm:rounded-[1.5rem] sm:px-8 sm:py-4 sm:text-xl">
-            <span class="mr-2 group-hover:-rotate-45 transition-transform">↺</span> ทำเมนูอื่นต่อ
+            <span class="motion-wiggle mr-2">↺</span> ทำเมนูอื่นต่อ
           </button>
         </div>
 
@@ -164,12 +165,20 @@
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount, watch } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
 const { status, signIn } = useAuth()
 const { notify } = useAppToast()
+const showConfetti = ref(false)
+let confettiTimeout
+const celebrate = () => {
+  showConfetti.value = false
+  requestAnimationFrame(() => { showConfetti.value = true })
+  if (confettiTimeout) clearTimeout(confettiTimeout)
+  confettiTimeout = setTimeout(() => { showConfetti.value = false; confettiTimeout = undefined }, 1500)
+}
 
 const matchedRecipesState = useState('matchedRecipes', () => [])
 if ((!matchedRecipesState.value || matchedRecipesState.value.length === 0) && import.meta.client) {
@@ -206,6 +215,7 @@ const saveRecipeToServer = async () => {
   try {
     const response = await $fetch('/api/recipes', { method: 'POST', body: selectedRecipe.value })
     notify(response.message || 'บันทึกเมนูเรียบร้อยแล้ว!', response.success ? 'success' : 'info')
+    if (response.success) celebrate()
     return response.success
   } catch (error) {
     notify(error?.data?.statusMessage || 'บันทึกไม่ได้ เกิดข้อผิดพลาด 🥺', 'error')
@@ -271,6 +281,7 @@ onMounted(async () => {
   await resumePendingSave()
 })
 watch(status, resumePendingSave)
+onBeforeUnmount(() => { if (confettiTimeout) clearTimeout(confettiTimeout) })
 
 const getRecipeImage = (recipe) => {
   const image = Array.isArray(recipe?.image) ? recipe.image[0] : recipe?.image
