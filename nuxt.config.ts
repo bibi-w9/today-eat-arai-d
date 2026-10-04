@@ -8,6 +8,9 @@ export default defineNuxtConfig({
   // 2. ตั้งค่าให้ Nuxt Auth รู้ว่าไม่ต้องบังคับล็อกอินทุกหน้า
   auth: {
     globalAppMiddleware: false,
+    // Let the client fetch its session after hydration; this avoids stale
+    // unauthenticated SSR state behind Railway's HTTPS reverse proxy.
+    disableServerSideAuth: true,
     // Auth.js endpoint ของแอปนี้อยู่ที่ /api/auth ไม่ใช่ origin ของเว็บไซต์
     // ปิดการอ่าน AUTH_ORIGIN อัตโนมัติ เพราะใน Docker ค่านี้เป็นเพียง origin
     // และถ้านำไปใช้เป็น baseURL จะทำให้คำขอ /session วนกลับเข้าหน้าเดิม
