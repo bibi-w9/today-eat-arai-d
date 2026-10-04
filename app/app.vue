@@ -102,7 +102,7 @@ const profileDropdownRef = ref(null)
 const mobileProfileDropdownRef = ref(null)
 let profileCloseTimeout
 let mobileMenuCloseTimeout
-const { status, data, signOut } = useAuth()
+const { status, data, getSession, signOut } = useAuth()
 const user = computed(() => data.value?.user || null)
 
 const cancelProfileClose = () => {
@@ -153,6 +153,9 @@ const closeProfileOnEscape = (event) => {
 }
 
 onMounted(() => {
+  void getSession().catch((error) => {
+    console.error('Failed to load authentication session:', error)
+  })
   document.addEventListener('pointerdown', closeProfileOnOutsideClick)
   document.addEventListener('keydown', closeProfileOnEscape)
 })
