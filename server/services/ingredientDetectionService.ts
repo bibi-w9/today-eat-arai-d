@@ -48,9 +48,11 @@ function nonMaximumSuppression(detections: IngredientDetection[]) {
 
 export async function detectIngredients(image: Buffer): Promise<IngredientDetection[]> {
   const source = sharp(image).rotate()
-  const metadata = await source.metadata()
-  const originalWidth = metadata.width
-  const originalHeight = metadata.height
+  const metadata = await sharp(image).metadata()
+  const orientation = metadata.orientation
+  const swapsDimensions = orientation !== undefined && orientation >= 5 && orientation <= 8
+  const originalWidth = swapsDimensions ? metadata.height : metadata.width
+  const originalHeight = swapsDimensions ? metadata.width : metadata.height
   if (!originalWidth || !originalHeight) throw createError({ statusCode: 400, message: 'ไฟล์นี้ไม่ใช่รูปภาพที่ใช้ตรวจจับได้' })
 
   // Keep the original aspect ratio while preparing the square tensor expected by YOLO.

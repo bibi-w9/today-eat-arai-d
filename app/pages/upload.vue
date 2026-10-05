@@ -319,11 +319,39 @@ const boxStyle = (d: Detection) => ({ left: `${(d.box.x / imageSize.value.width)
 const resetDetection = () => { hasDetected.value = false; images.value.forEach(image => { image.detections = [] }) }
 const setImageSize = () => { if (imageRef.value) imageSize.value = { width: imageRef.value.naturalWidth, height: imageRef.value.naturalHeight } }
 const selectImage = async (index: number) => { selectedIndex.value = index; await nextTick(); setImageSize() }
-const addFiles = (files: File[]) => {
+const normalizeImageFile = async (file: File) => {
+  // Camera images can contain EXIF orientation instead of storing the
+  // pixels in their displayed orientation. Normalize them once so that the
+  // preview, detector, and detection boxes all use the same coordinate space.
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
+    const canvas = document.createElement('canvas')
+    canvas.width = bitmap.width
+    canvas.height = bitmap.height
+    const context = canvas.getContext('2d')
+    if (!context) return file
+
+    context.drawImage(bitmap, 0, 0)
+    bitmap.close()
+
+    const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95))
+    if (!blob) return file
+
+    const baseName = file.name.replace(/\.[^.]+$/, '') || 'image'
+    return new File([blob], `${baseName}.jpg`, { type: 'image/jpeg', lastModified: file.lastModified })
+  } catch {
+    // Keep the original file as a fallback for browsers that do not support
+    // EXIF-aware ImageBitmap creation.
+    return file
+  }
+}
+
+const addFiles = async (files: File[]) => {
   const imageFiles = files.filter(file => file.type.startsWith('image/'))
   if (!imageFiles.length) return
   resetDetection()
-  images.value.push(...imageFiles.map(file => ({ id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`, file, preview: URL.createObjectURL(file), detections: [] })))
+  const normalizedFiles = await Promise.all(imageFiles.map(normalizeImageFile))
+  images.value.push(...normalizedFiles.map(file => ({ id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`, file, preview: URL.createObjectURL(file), detections: [] })))
   selectedIndex.value = images.value.length - 1
 }
 const removeImage = (index: number) => {
@@ -338,7 +366,7 @@ const replaceImages = (event: Event) => {
   const files = Array.from(input.files || []).filter(file => file.type.startsWith('image/'))
   if (!files.length) return
   clearImages()
-  addFiles(files)
+  void addFiles(files)
   input.value = ''
 }
 
@@ -360,9 +388,13 @@ const capturePhoto = () => {
   const sourceX = (video.videoWidth - sourceWidth) / 2; const sourceY = (video.videoHeight - sourceHeight) / 2
   canvas.width = 1600; canvas.height = 1200
   canvas.getContext('2d')?.drawImage(video, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height)
-  canvas.toBlob(blob => { if (blob) { addFiles([new File([blob], `captured-ingredients-${Date.now()}.jpg`, { type: 'image/jpeg' })]); selectImage(images.value.length - 1) } }, 'image/jpeg', 0.92)
+  canvas.toBlob(async blob => {
+    if (!blob) return
+    await addFiles([new File([blob], `captured-ingredients-${Date.now()}.jpg`, { type: 'image/jpeg' })])
+    await selectImage(images.value.length - 1)
+  }, 'image/jpeg', 0.92)
 }
-const handleFileChange = (event: Event) => { const input = event.target as HTMLInputElement; addFiles(Array.from(input.files || [])); input.value = '' }
+const handleFileChange = (event: Event) => { const input = event.target as HTMLInputElement; void addFiles(Array.from(input.files || [])); input.value = '' }
 const analyzeImages = async () => {
   if (!images.value.length) return
   isDetecting.value = true; detectingProgress.value = 0
