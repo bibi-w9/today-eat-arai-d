@@ -70,9 +70,10 @@
                 <img ref="imageRef" :src="selectedImage.preview" class="absolute inset-0 h-full w-full object-contain"
                   alt="รูปวัตถุดิบ" @load="setImageSize" />
                 <div v-for="(detection, index) in selectedImage.detections" :key="`${detection.label}-${index}`"
-                  class="absolute rounded-md border-[3px] border-pink-500" :style="boxStyle(detection)">
-                  <span class="absolute -top-7 left-0 max-w-[40vw] break-words whitespace-normal rounded-md bg-pink-500 px-2 py-1 text-xs font-bold text-white shadow">
-                    {{ detection.label }} {{ detection.confidence.toFixed(1) }}%
+                  class="absolute rounded-md border-[3px]" :class="detectionColor(detection)" :style="boxStyle(detection)">
+                  <span class="absolute -top-7 left-0 max-w-[40vw] break-words whitespace-normal rounded-md px-2 py-1 text-xs font-bold text-white shadow"
+                    :class="detectionColor(detection, true)">
+                    {{ detectionTitle(detection) }} {{ detection.confidence.toFixed(1) }}%
                   </span>
                 </div>
               </div>
@@ -194,14 +195,20 @@
                   </div>
                   <div v-if="activeDetectionGroup.detections.length" class="grid gap-2 sm:grid-cols-2">
                     <div v-for="(detection, index) in activeDetectionGroup.detections" :key="`${activeDetectionGroup.imageIndex}-${index}`"
-                      class="group flex min-w-0 items-start justify-between gap-3 rounded-xl border border-pink-100 bg-white px-3 py-2.5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-pink-200 hover:shadow-md">
-                      <span class="flex min-w-0 items-start gap-2 text-base font-extrabold leading-6 text-pink-800">
+                      class="group min-w-0 rounded-xl border bg-white px-3 py-2.5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                      :class="detectionCardColor(detection)">
+                      <div class="flex items-start justify-between gap-3">
+                        <span class="flex min-w-0 items-start gap-2 text-base font-extrabold leading-6 text-pink-800">
                         <span class="motion-wiggle mt-1 text-sm text-pink-400" aria-hidden="true">✿</span>
-                        <span class="whitespace-normal break-words">{{ detection.label }}</span>
-                      </span>
-                      <span class="shrink-0 rounded-full bg-pink-100 px-2 py-1 text-xs font-extrabold text-pink-700">
-                        {{ detection.confidence.toFixed(1) }}%
-                      </span>
+                          <span class="whitespace-normal break-words">{{ detectionTitle(detection) }}</span>
+                        </span>
+                        <span class="shrink-0 rounded-full px-2 py-1 text-xs font-extrabold" :class="detectionBadgeColor(detection)">
+                          {{ detection.confidence.toFixed(1) }}%
+                        </span>
+                      </div>
+                      <p v-if="detectionStatus(detection) !== 'confirmed'" class="mt-1 text-xs leading-5" :class="detectionMessageColor(detection)">
+                        {{ detectionMessage(detection) }}
+                      </p>
                     </div>
                   </div>
                   <p v-else class="rounded-xl bg-white/80 px-3 py-3 text-sm leading-6 text-gray-600">ยังไม่พบวัตถุดิบในภาพนี้ ลองเลือกภาพอื่นหรือถ่ายใหม่ให้เห็นวัตถุดิบชัดขึ้นนะ</p>
@@ -271,6 +278,7 @@ import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 type Detection = { label: string; confidence: number; box: { x: number; y: number; width: number; height: number } }
+type DetectionStatus = 'confirmed' | 'uncertain' | 'unknown'
 type ImageItem = { id: string; file: File; preview: string; detections: Detection[] }
 
 const router = useRouter()
@@ -310,6 +318,29 @@ const allDetections = computed(() => images.value.flatMap((image, imageIndex) =>
 const detectionGroups = computed(() => images.value
   .map((image, imageIndex) => ({ image, imageIndex, detections: image.detections })))
 const activeDetectionGroup = computed(() => detectionGroups.value[resultImageIndex.value] || detectionGroups.value[0] || null)
+const detectionStatus = (detection: Detection): DetectionStatus => {
+  if (detection.confidence < 50) return 'unknown'
+  if (detection.confidence <= 70) return 'uncertain'
+  return 'confirmed'
+}
+const detectionTitle = (detection: Detection) => {
+  const status = detectionStatus(detection)
+  return status === 'unknown' ? 'ไม่รู้จักวัตถุดิบนี้' : status === 'uncertain' ? `อาจเป็น${detection.label}` : detection.label
+}
+const detectionMessage = (detection: Detection) => detectionStatus(detection) === 'unknown'
+  ? 'อาจเกิดจากภาพไม่ชัด ถ่ายไกลเกินไป หรือระบบยังไม่มีวัตถุดิบนี้ในรายการที่รู้จัก'
+  : 'หากผลตรวจไม่ถูกต้อง กรุณาถ่ายภาพหรืออัปโหลดรูปใหม่'
+const detectionColor = (detection: Detection, fill = false) => {
+  const status = detectionStatus(detection)
+  if (status === 'unknown') return fill ? 'bg-red-500' : 'border-red-500'
+  if (status === 'uncertain') return fill ? 'bg-yellow-500' : 'border-yellow-500'
+  return fill ? 'bg-pink-500' : 'border-pink-500'
+}
+const detectionCardColor = (detection: Detection) => detectionStatus(detection) === 'unknown'
+  ? 'border-red-200 hover:border-red-300' : detectionStatus(detection) === 'uncertain' ? 'border-yellow-200 hover:border-yellow-300' : 'border-pink-100 hover:border-pink-200'
+const detectionBadgeColor = (detection: Detection) => detectionStatus(detection) === 'unknown'
+  ? 'bg-red-100 text-red-700' : detectionStatus(detection) === 'uncertain' ? 'bg-yellow-100 text-yellow-800' : 'bg-pink-100 text-pink-700'
+const detectionMessageColor = (detection: Detection) => detectionStatus(detection) === 'unknown' ? 'text-red-700' : 'text-yellow-700'
 const previewStyle = computed(() => {
   const ratio = imageSize.value.width / imageSize.value.height
   return { width: `min(100%, calc(32rem * ${ratio}))`, aspectRatio: `${imageSize.value.width} / ${imageSize.value.height}` }
@@ -412,7 +443,9 @@ const analyzeImages = async () => {
 const findMenus = async () => {
   isMatching.value = true
   try {
-    const mappedIngredients = [...new Set(allDetections.value.flatMap(item => item.label === 'บะหมี่กึ่งสำเร็จรูป' ? ['บะหมี่กึ่งสำเร็จรูป', 'มาม่า'] : [item.label]))]
+    const mappedIngredients = [...new Set(allDetections.value
+      .filter(item => detectionStatus(item) !== 'unknown')
+      .flatMap(item => item.label === 'บะหมี่กึ่งสำเร็จรูป' ? ['บะหมี่กึ่งสำเร็จรูป', 'มาม่า'] : [item.label]))]
     const response = await $fetch<{ success: boolean; data: any[] }>('/api/recipes/match', { method: 'POST', body: { category: selectedCategory, method: selectedMethod, ingredients: mappedIngredients } })
     if (response.success && response.data.length) {
       matchedRecipesState.value = response.data
